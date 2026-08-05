@@ -1,5 +1,7 @@
 # 蛋仔地图 Agent Skill（代理技能包）
 
+这是给蛋仔地图作者准备的 Agent（代理）开发技能包，支持原点版和世界版。安装后，Agent（代理）会按规则确认地图、查证接口、保护已有功能，并记录需求、计划和资产，帮助你减少重复试错。
+
 把下面这句话完整发给你的 Agent（代理）：
 
 > 帮我安装这个 Skill（技能包）：https://github.com/Zx9874/eggy-agent-skills/blob/main/START-HERE.md
