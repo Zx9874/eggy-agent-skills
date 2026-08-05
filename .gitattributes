@@ -1,0 +1,8 @@
+# 发布清单按文件原始字节计算指纹，所有文本固定使用 LF（换行符）。
+* text eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.zip binary

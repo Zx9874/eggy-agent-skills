@@ -1,0 +1,31 @@
+# 编辑器自动生成和本机工具目录
+.codemaker/
+.vscode/
+.agents/
+.opencode/
+.eggy-agent/
+
+# 官方接口、配置与数据映射
+Data/
+data/
+server/_trigger/
+EggyAPI.lua
+EggyEditorAPI.lua
+DebugTools.lua
+eggy.json
+UserDefault.json
+
+# 运行日志和报告
+log.txt
+profile.html
+profile_zh.html
+*.log
+*.tmp
+
+# 凭据和本机私密配置
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.p12

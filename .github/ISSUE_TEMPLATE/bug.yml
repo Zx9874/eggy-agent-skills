@@ -1,0 +1,44 @@
+name: 安装或使用问题
+description: 报告可以复现的安装、升级或技能问题
+title: "[问题] "
+body:
+  - type: markdown
+    attributes:
+      value: 请删除密钥、账号、个人路径和私人地图编号后再提交。
+  - type: dropdown
+    id: area
+    attributes:
+      label: 问题类型
+      options:
+        - 安装入口
+        - 首次安装
+        - 升级或恢复
+        - 技能没有加载
+        - 检查脚本
+        - 其他
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: 工具包版本
+      placeholder: 例如 0.1.0-rc.1
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 从哪一步开始、执行了什么、看到了什么。
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期与实际结果
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 已脱敏的错误信息或截图

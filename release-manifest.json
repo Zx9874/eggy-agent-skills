@@ -1,0 +1,192 @@
+{
+    "schemaVersion":  1,
+    "version":  "0.1.0-rc.2",
+    "channel":  "release-candidate",
+    "edition":  "dual",
+    "compatibleAgents":  [
+                             "OpenCode",
+                             "Codex"
+                         ],
+    "files":  [
+                  {
+                      "path":  "skills/eggy-custom-event/SKILL.md",
+                      "target":  ".agents/skills/eggy-custom-event/SKILL.md",
+                      "sha256":  "10aa891915466e12114c5b21f7422cdb58ec95664ba1e0f9012570ec0851f6c0"
+                  },
+                  {
+                      "path":  "skills/eggy-design/SKILL.md",
+                      "target":  ".agents/skills/eggy-design/SKILL.md",
+                      "sha256":  "f735bce5f1acd2fbc6827afb6ae9e4a4c8e97c57a0d85971f37a0201b2c8adf5"
+                  },
+                  {
+                      "path":  "skills/eggy-dev-plan/SKILL.md",
+                      "target":  ".agents/skills/eggy-dev-plan/SKILL.md",
+                      "sha256":  "df173152a9bb62af3923e6b3ccaf68ade7f5e04eb556d8e24718d5db7aa2019c"
+                  },
+                  {
+                      "path":  "skills/eggy-editor-cli/SKILL.md",
+                      "target":  ".agents/skills/eggy-editor-cli/SKILL.md",
+                      "sha256":  "760e75296b857c220ce8e3feff2c5a1b190778786d6de155a4151def41675619"
+                  },
+                  {
+                      "path":  "skills/eggy-kb/SKILL.md",
+                      "target":  ".agents/skills/eggy-kb/SKILL.md",
+                      "sha256":  "847edd937ac76abcfd42a5f8ec9ea5115c996e4cee019f8231515d5a3b0225f5"
+                  },
+                  {
+                      "path":  "skills/eggy-log-triage/SKILL.md",
+                      "target":  ".agents/skills/eggy-log-triage/SKILL.md",
+                      "sha256":  "8907a71752e3166db22c878bca91dffc19d59f7fb946f673c5f5d822b5c07be9"
+                  },
+                  {
+                      "path":  "skills/eggy-lua-coding/SKILL.md",
+                      "target":  ".agents/skills/eggy-lua-coding/SKILL.md",
+                      "sha256":  "5cd644c679178700d21d3c45083067eadb8e2a6014db11ff66dbf6e99b908a12"
+                  },
+                  {
+                      "path":  "skills/eggy-lua-export/SKILL.md",
+                      "target":  ".agents/skills/eggy-lua-export/SKILL.md",
+                      "sha256":  "524cd6b2d968d1f886954cb24e5d8af4340148196b50a1cbf3d23fc5ee588d93"
+                  },
+                  {
+                      "path":  "skills/eggy-playtest/SKILL.md",
+                      "target":  ".agents/skills/eggy-playtest/SKILL.md",
+                      "sha256":  "d98642c8568dcc3e2b4353f025441af1e9c03bc83129a89ed68f3260ca983c16"
+                  },
+                  {
+                      "path":  "skills/eggy-preset-io/SKILL.md",
+                      "target":  ".agents/skills/eggy-preset-io/SKILL.md",
+                      "sha256":  "f0fb5bfb7313971c922dbd26117f5bf989c982d474b59bf1a8d4b7430a2a5e10"
+                  },
+                  {
+                      "path":  "skills/eggy-qa/SKILL.md",
+                      "target":  ".agents/skills/eggy-qa/SKILL.md",
+                      "sha256":  "4b630c50cf1bc729f48f4660e4dd6be94403191954732390665e91335e6f13f4"
+                  },
+                  {
+                      "path":  "scripts/api-preflight.ps1",
+                      "target":  ".eggy-agent/scripts/api-preflight.ps1",
+                      "sha256":  "c9bd4dae90da7662971f5afe3c799a36e2d91eda44f57239584e2c68ad58e335"
+                  },
+                  {
+                      "path":  "scripts/build-release.ps1",
+                      "target":  ".eggy-agent/scripts/build-release.ps1",
+                      "sha256":  "afe2aed92b79f389153e3e6bd38a101c262c33c4f2d6bb68c295f4eebad583e3"
+                  },
+                  {
+                      "path":  "scripts/EggyAgent.Common.ps1",
+                      "target":  ".eggy-agent/scripts/EggyAgent.Common.ps1",
+                      "sha256":  "c315d442f97dbd5654b2780f4efdb571635f15313340e9f6cd4b9d4b6655bd66"
+                  },
+                  {
+                      "path":  "scripts/export-contract-audit.ps1",
+                      "target":  ".eggy-agent/scripts/export-contract-audit.ps1",
+                      "sha256":  "5e88f393654c67bbb17903d6241185da93473fb5abbb49bd861489fdd32e936d"
+                  },
+                  {
+                      "path":  "scripts/generate-release-manifest.ps1",
+                      "target":  ".eggy-agent/scripts/generate-release-manifest.ps1",
+                      "sha256":  "e39c597e45df3b10ec7d0c48d79eb447d22f37d5073087c416db6aecfbc6cbb0"
+                  },
+                  {
+                      "path":  "scripts/git-batch-audit.ps1",
+                      "target":  ".eggy-agent/scripts/git-batch-audit.ps1",
+                      "sha256":  "dc5a242040d4df1a4ac2709cf103a4f1bcdc6edee7fdb7c8209421e65e28c5a5"
+                  },
+                  {
+                      "path":  "scripts/install-eggy-agent.ps1",
+                      "target":  ".eggy-agent/scripts/install-eggy-agent.ps1",
+                      "sha256":  "dc13129ab1a6a56dca4a995a941197438d71ac3eadffdce0c3502ed55f6b9116"
+                  },
+                  {
+                      "path":  "scripts/log-audit.ps1",
+                      "target":  ".eggy-agent/scripts/log-audit.ps1",
+                      "sha256":  "624e4da943984bb323ab59ab909d3e19fd941010f372064f2429cc9c79f58cfd"
+                  },
+                  {
+                      "path":  "scripts/restore-eggy-agent.ps1",
+                      "target":  ".eggy-agent/scripts/restore-eggy-agent.ps1",
+                      "sha256":  "6ea67d3a430d3259d0dad1da3c2e41424ffab9ae270914182b36604deba50704"
+                  },
+                  {
+                      "path":  "scripts/set-eggy-agent-enabled.ps1",
+                      "target":  ".eggy-agent/scripts/set-eggy-agent-enabled.ps1",
+                      "sha256":  "a47656c77a4b0d51138bb13e71d52a03079a44f3ecac5b761fb56052dee61db5"
+                  },
+                  {
+                      "path":  "scripts/update-eggy-agent.ps1",
+                      "target":  ".eggy-agent/scripts/update-eggy-agent.ps1",
+                      "sha256":  "305bf7e358216608f1d048b279ed0127e252de1e10a476eb073b1efd3f53fb44"
+                  },
+                  {
+                      "path":  "scripts/validate-release.ps1",
+                      "target":  ".eggy-agent/scripts/validate-release.ps1",
+                      "sha256":  "03cf8f167e7bd68ab4893b672a22eddec641d4a609d5d98200da02f1b67a220c"
+                  },
+                  {
+                      "path":  "templates/地图.gitattributes模板",
+                      "target":  ".eggy-agent/templates/地图.gitattributes模板",
+                      "sha256":  "730a35ae3d558080083c3103d9ac8100c3f6561678092abe341701dfa331eb1d"
+                  },
+                  {
+                      "path":  "templates/地图.gitignore模板",
+                      "target":  ".eggy-agent/templates/地图.gitignore模板",
+                      "sha256":  "aceb70320af99a2769bf901f9a692fe92ddd1f32f8c24caf9b4eaa60e8ee63a3"
+                  },
+                  {
+                      "path":  "templates/根AGENTS模板.md",
+                      "target":  ".eggy-agent/templates/根AGENTS模板.md",
+                      "sha256":  "23bb69b2421a80ace61b32adc190585fa83e2277bfce486844c435645449fe9f"
+                  },
+                  {
+                      "path":  "templates/根规则受管块.md",
+                      "target":  ".eggy-agent/templates/根规则受管块.md",
+                      "sha256":  "1cc94f1349527c7e7547576c22ce09fc46af3ebb6961d9b2dcde79b1845ac053"
+                  },
+                  {
+                      "path":  "templates/红线卡模板.md",
+                      "target":  ".eggy-agent/templates/红线卡模板.md",
+                      "sha256":  "626c40a38b57f46a8e6cbf22653059f1a4c3070705c7405824a8d6343d183c63"
+                  },
+                  {
+                      "path":  "templates/开发计划模板.md",
+                      "target":  ".eggy-agent/templates/开发计划模板.md",
+                      "sha256":  "082bbff183c02a0f5a80b1d0bb29f6c0ead63ec78ff02c0101e742c92530acee"
+                  },
+                  {
+                      "path":  "templates/开发日志模板.md",
+                      "target":  ".eggy-agent/templates/开发日志模板.md",
+                      "sha256":  "7bd3a8e1c315736203bef712c7ff73c3fd5af5f958f86fc54741a346b114fe43"
+                  },
+                  {
+                      "path":  "templates/可靠知识库README模板.md",
+                      "target":  ".eggy-agent/templates/可靠知识库README模板.md",
+                      "sha256":  "a96f6ac33491d584cc2eb55aedb0c703583981e45aece568d9965c2a8408bb4a"
+                  },
+                  {
+                      "path":  "templates/项目AGENTS模板.md",
+                      "target":  ".eggy-agent/templates/项目AGENTS模板.md",
+                      "sha256":  "91d3f5d08ff90a07f5d5764ff3786e5f8295abc5e42cceda6e344cb3ab054270"
+                  },
+                  {
+                      "path":  "templates/项目README模板.md",
+                      "target":  ".eggy-agent/templates/项目README模板.md",
+                      "sha256":  "196908fb8d24e6ae5c48ec1d29ad88c9095294d86bbead8eadf09fa4d532b343"
+                  },
+                  {
+                      "path":  "templates/项目规则受管块.md",
+                      "target":  ".eggy-agent/templates/项目规则受管块.md",
+                      "sha256":  "7fa12f5332ed032a3b40b1722c6d9d5e43d83049ddd8ffe31427f9c45725dd0a"
+                  },
+                  {
+                      "path":  "templates/需求文档模板.md",
+                      "target":  ".eggy-agent/templates/需求文档模板.md",
+                      "sha256":  "833137d2e27604cdebabe6102076743e6d248ca749b7f71ee9e8c7607b7d9ee9"
+                  },
+                  {
+                      "path":  "templates/资产清单模板.md",
+                      "target":  ".eggy-agent/templates/资产清单模板.md",
+                      "sha256":  "851b88fecb1d1a7d21a35a0555fe55229acd9efd79d8846333f777ff87a99327"
+                  }
+              ]
+}

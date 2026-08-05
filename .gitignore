@@ -1,0 +1,11 @@
+# 内部工作文件（含本机素材路径），发布仓库不包含
+KIMI任务包.md
+
+# 系统与编辑器杂项
+Thumbs.db
+Desktop.ini
+*.tmp
+.vscode/
+
+# 本地候选包，由发布脚本重复生成
+dist/

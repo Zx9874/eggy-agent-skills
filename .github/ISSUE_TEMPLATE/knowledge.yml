@@ -1,0 +1,35 @@
+name: 原点版经验补充
+description: 提交经过来源或测试支持的接口、编辑器边界和错误经验
+title: "[经验] "
+body:
+  - type: markdown
+    attributes:
+      value: 未验证的观察可以提交，但必须明确标为未验证。不要上传官方文档全文或私人地图内容。
+  - type: input
+    id: version
+    attributes:
+      label: 原点版编辑器版本与日期
+    validations:
+      required: true
+  - type: textarea
+    id: fact
+    attributes:
+      label: 结论与适用范围
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: 来源、文件与行号
+    validations:
+      required: true
+  - type: textarea
+    id: test
+    attributes:
+      label: 测试步骤与结果
+  - type: textarea
+    id: boundary
+    attributes:
+      label: 未知项和禁止外推范围
+    validations:
+      required: true
