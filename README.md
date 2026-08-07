@@ -22,7 +22,7 @@
 
 把下面这句话完整发给你的 Agent（代理）：
 
-> 帮我安装这个 Skill（技能包）：https://github.com/Zx9874/eggy-agent-skills/blob/main/START-HERE.md
+> 帮我安装这个 Skill（技能包）：https://gitee.com/tomato_fry_tomato/eggy-agent-skills/blob/main/START-HERE.md
 
 Agent（代理）只会向你确认三个信息：蛋仔工程总文件夹（总工作区）、要开发的地图、单人还是多人。回答以后，等它完成安装和检查即可。
 
