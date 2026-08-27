@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "package": "eggy-agent-skills",
+  "profiles": {
+    "common": [
+      "eggy-ponytail",
+      "eggy-api-research"
+    ],
+    "map-origin": [
+      "eggy-ponytail",
+      "eggy-api-research",
+      "eggy-game-planning",
+      "eggy-design",
+      "eggy-dev-plan",
+      "eggy-kb",
+      "eggy-lua-coding",
+      "eggy-lua-export",
+      "eggy-custom-event",
+      "eggy-log-triage",
+      "eggy-qa",
+      "eggy-playtest",
+      "eggy-editor-cli",
+      "eggy-preset-io"
+    ],
+    "map-world": [
+      "eggy-ponytail",
+      "eggy-api-research",
+      "eggy-game-planning",
+      "eggy-design",
+      "eggy-dev-plan",
+      "eggy-kb",
+      "eggy-lua-coding",
+      "eggy-lua-export",
+      "eggy-log-triage",
+      "eggy-qa",
+      "eggy-playtest",
+      "eggy-editor-cli",
+      "eggy-preset-io"
+    ],
+    "tooling": [
+      "eggy-ponytail",
+      "eggy-api-research"
+    ],
+    "map-origin-optional": [
+      "eggy-cover-design",
+      "eggy-eui-node-rename",
+      "eggy-unslop"
+    ],
+    "map-world-optional": [
+      "eggy-cover-design",
+      "eggy-eui-node-rename",
+      "eggy-unit-model-swap",
+      "eggy-unslop"
+    ],
+    "tooling-optional": [
+      "eggy-editor-cli",
+      "eggy-eui-node-rename",
+      "eggy-preset-io",
+      "eggy-unslop",
+      "lingxi-doc-to-markdown"
+    ],
+    "full": [
+      "eggy-api-research",
+      "eggy-cover-design",
+      "eggy-custom-event",
+      "eggy-design",
+      "eggy-dev-plan",
+      "eggy-editor-cli",
+      "eggy-eui-node-rename",
+      "eggy-game-planning",
+      "eggy-kb",
+      "eggy-log-triage",
+      "eggy-lua-coding",
+      "eggy-lua-export",
+      "eggy-playtest",
+      "eggy-ponytail",
+      "eggy-preset-io",
+      "eggy-qa",
+      "eggy-unit-model-swap",
+      "eggy-unslop",
+      "lingxi-doc-to-markdown"
+    ]
+  },
+  "hosts": {
+    "Codex": {
+      "projectSkillRoot": ".agents/skills",
+      "globalSkillRoot": ".agents/skills"
+    },
+    "OpenCode": {
+      "projectSkillRoot": ".agents/skills",
+      "globalSkillRoot": ".agents/skills"
+    },
+    "ZCode": {
+      "projectSkillRoot": ".zcode/skills",
+      "globalSkillRoot": ".zcode/skills"
+    }
+  },
+  "skills": [
+    { "name": "eggy-api-research", "path": "skills/eggy-api-research", "domains": ["map", "tooling"], "editions": ["Origin", "World"], "tier": "core", "defaultInstall": true, "hosts": ["Codex", "OpenCode", "ZCode"] },
+    { "name": "eggy-cover-design", "path": "skills/eggy-cover-design", "domains": ["map"], "editions": ["Origin", "World"], "tier": "optional", "defaultInstall": false, "hosts": ["Codex", "OpenCode", "ZCode"] },
+    { "name": "eggy-custom-event", "path": "skills/eggy-custom-event", "domains": ["map"], "editions": ["Origin", "World"], "tier": "core", "defaultInstall": true, "hosts": ["Codex", "OpenCode", "ZCode"] },
+    { "name": "eggy-design", "path": "skills/eggy-design", "domains": ["map"], "editions": ["Origin", "World"], "tier": "core", "defaultInstall": true, "hosts": ["Codex", "OpenCode", "ZCode"] },
+    { "name": "eggy-dev-plan", "path": "skills/eggy-dev-plan", "domains": ["map"], "editions": ["Origin", "World"], "tier": "core", "defaultInstall": true, "hosts": ["Codex", "OpenCode", "ZCode"] },
+    { "name": "eggy-editor-cli", "path": "skills/eggy-editor-cli", "domains": ["map", "tooling"], "editions": ["Origin", "World"], "tier": "core", "defaultInstall": true, "hosts": ["Codex", "OpenCode", "ZCode"] },
+    { "name": "eggy-eui-node-rename", "path": "skills/eggy-eui-node-rename", "domains": ["map", "tooling"], "editions": ["Origin", "World"], "tier": "optional", "defaultInstall": false, "hosts": ["Codex", "OpenCode", "ZCode"] },
+    { "name": "eggy-game-planning", "path": "skills/eggy-game-planning", "domains": ["map"], "editions": ["Origin", "World"], "tier": "core", "defaultInstall": true, "hosts": ["Codex", "OpenCode", "ZCode"] },
+    { "name": "eggy-kb", "path": "skills/eggy-kb", "domains": ["map"], "editions": ["Origin", "World"], "tier": "core", "defaultInstall": true, "hosts": ["Codex", "OpenCode", "ZCode"] },
+    { "name": "eggy-log-triage", "path": "skills/eggy-log-triage", "domains": ["map"], "editions": ["Origin", "World"], "tier": "core", "defaultInstall": true, "hosts": ["Codex", "OpenCode", "ZCode"] },
+    { "name": "eggy-lua-coding", "path": "skills/eggy-lua-coding", "domains": ["map"], "editions": ["Origin", "World"], "tier": "core", "defaultInstall": true, "hosts": ["Codex", "OpenCode", "ZCode"] },
+    { "name": "eggy-lua-export", "path": "skills/eggy-lua-export", "domains": ["map"], "editions": ["Origin", "World"], "tier": "core", "defaultInstall": true, "hosts": ["Codex", "OpenCode", "ZCode"] },
+    { "name": "eggy-playtest", "path": "skills/eggy-playtest", "domains": ["map"], "editions": ["Origin", "World"], "tier": "core", "defaultInstall": true, "hosts": ["Codex", "OpenCode", "ZCode"] },
+    { "name": "eggy-ponytail", "path": "skills/eggy-ponytail", "domains": ["map", "tooling"], "editions": ["Origin", "World"], "tier": "core", "defaultInstall": true, "hosts": ["Codex", "OpenCode", "ZCode"] },
+    { "name": "eggy-preset-io", "path": "skills/eggy-preset-io", "domains": ["map", "tooling"], "editions": ["Origin", "World"], "tier": "core", "defaultInstall": true, "hosts": ["Codex", "OpenCode", "ZCode"] },
+    { "name": "eggy-qa", "path": "skills/eggy-qa", "domains": ["map"], "editions": ["Origin", "World"], "tier": "core", "defaultInstall": true, "hosts": ["Codex", "OpenCode", "ZCode"] },
+    { "name": "eggy-unit-model-swap", "path": "skills/eggy-unit-model-swap", "domains": ["map", "tooling"], "editions": ["World"], "tier": "optional", "defaultInstall": false, "hosts": ["Codex", "OpenCode", "ZCode"] },
+    { "name": "eggy-unslop", "path": "skills/eggy-unslop", "domains": ["map", "tooling"], "editions": ["Origin", "World"], "tier": "optional", "defaultInstall": false, "hosts": ["Codex", "OpenCode", "ZCode"] },
+    { "name": "lingxi-doc-to-markdown", "path": "skills/lingxi-doc-to-markdown", "domains": ["tooling"], "editions": [], "tier": "optional", "defaultInstall": false, "hosts": ["Codex", "OpenCode", "ZCode"] }
+  ]
+}

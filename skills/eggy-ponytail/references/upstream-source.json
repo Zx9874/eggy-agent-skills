@@ -1,0 +1,37 @@
+{
+  "sourceUrl": "https://github.com/DietrichGebert/ponytail",
+  "sourceCommit": "2ed6c52c9d7e5e56942508591085fd45dea277d3",
+  "files": [
+    {
+      "name": "ponytail",
+      "snapshot": "references/upstream/ponytail-SKILL.md",
+      "sha256": "46a57e26a2632e7fa40eae6a3cf3011ccdc4d8db19d8f8617907d6b5deef055e"
+    },
+    {
+      "name": "ponytail-audit",
+      "snapshot": "references/upstream/ponytail-audit-SKILL.md",
+      "sha256": "49e835c96313009179ec162d80ccc9d91625e387c8af7cd3975c531ba105b2d5"
+    },
+    {
+      "name": "ponytail-review",
+      "snapshot": "references/upstream/ponytail-review-SKILL.md",
+      "sha256": "6c8b7e5c897a406b66da6aabda7fa6509e8d1d447e73e602265d7986497445d1"
+    },
+    {
+      "name": "ponytail-debt",
+      "snapshot": "references/upstream/ponytail-debt-SKILL.md",
+      "sha256": "c0a5c0c0cc843cb53f15b792790946768500b45538d07fadbf0602ed6af63a47"
+    },
+    {
+      "name": "ponytail-gain",
+      "snapshot": "references/upstream/ponytail-gain-SKILL.md",
+      "sha256": "f8847c410b54978fff41eab775fc754d41ede19ad6fb72fac799b65616cc6683"
+    },
+    {
+      "name": "ponytail-help",
+      "snapshot": "references/upstream/ponytail-help-SKILL.md",
+      "sha256": "07e0fc50c722cee981d47f62a5d32a7def4cb65651f414724e5fd6939f145977"
+    }
+  ],
+  "licenseSha256": "f1af4301bd3b85026965f9f1cfa101b9bfd73a75c6b92f7a2a72bab5768abd36"
+}

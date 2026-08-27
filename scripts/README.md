@@ -13,6 +13,7 @@
 | `generate-release-manifest.ps1` | 依据当前技能、脚本和模板重建发布清单与文件指纹 |
 | `validate-release.ps1` | 校验版本、技能结构、入口文件、相对链接、敏感内容和遗留占位 |
 | `build-release.ps1` | 校验后生成候选压缩包及 SHA256（文件完整性指纹） |
+| `sync-upstream.ps1` | 从维护者指定的 Ponytail 上游工作区更新只读快照、来源记录和许可证 |
 | `EggyAgent.Common.ps1` | 安装体系共用函数，不单独执行 |
 
 首次安装的三个必要参数是 `WorkspaceRoot`（总工作区目录）、`ProjectPath`（地图工程目录）和 `PlayerMode`（单人或多人）。零基础用户不需要手写命令，应把仓库中的 `START-HERE.md`（代理安装入口）链接交给代理。

@@ -4,60 +4,34 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-if (-not $PackageRoot) {
-    $PackageRoot = Join-Path $PSScriptRoot '..'
-}
-$root = (Resolve-Path -LiteralPath $PackageRoot).Path
-$versionPath = Join-Path $root 'VERSION'
-if (-not (Test-Path -LiteralPath $versionPath -PathType Leaf)) {
-    throw '缺少 VERSION（版本号文件）。'
-}
-$version = (Get-Content -LiteralPath $versionPath -Raw -Encoding UTF8).Trim()
-if ($version -notmatch '^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$') {
-    throw "版本号格式不正确：$version"
-}
+if (-not $PackageRoot) { $PackageRoot = Join-Path $PSScriptRoot '..' }
+. (Join-Path $PSScriptRoot 'EggyAgent.Common.ps1')
 
-$entries = @()
-$skillRoot = Join-Path $root 'skills'
-foreach ($file in Get-ChildItem -LiteralPath $skillRoot -Recurse -File | Where-Object { $_.Name -ne 'README.md' }) {
-    $relative = $file.FullName.Substring($root.Length + 1).Replace('\', '/')
-    $target = '.agents/skills/' + $file.FullName.Substring($skillRoot.Length + 1).Replace('\', '/')
-    $entries += [pscustomobject]@{
-        path = $relative
-        target = $target
-        sha256 = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
-    }
-}
+$root = Resolve-EggyDirectory -Path $PackageRoot -Label '公开包目录'
+$version = Get-EggyPackageVersion -PackageRoot $root
+$catalog = Get-EggyCatalog -PackageRoot $root
+$entries = @(Get-EggyPublishSourceFiles -PackageRoot $root)
 
-foreach ($file in Get-ChildItem -LiteralPath (Join-Path $root 'scripts') -File -Filter '*.ps1') {
-    $relative = $file.FullName.Substring($root.Length + 1).Replace('\', '/')
-    $entries += [pscustomobject]@{
-        path = $relative
-        target = '.eggy-agent/scripts/' + $file.Name
-        sha256 = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
-    }
-}
-
-foreach ($file in Get-ChildItem -LiteralPath (Join-Path $root 'templates') -File) {
-    $relative = $file.FullName.Substring($root.Length + 1).Replace('\', '/')
-    $entries += [pscustomobject]@{
-        path = $relative
-        target = '.eggy-agent/templates/' + $file.Name
-        sha256 = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
-    }
-}
-
-$manifest = [pscustomobject]@{
-    schemaVersion = 1
+$manifest = [ordered]@{
+    schemaVersion = 2
+    package = [string]$(if ($catalog.package) { $catalog.package } else { 'eggy-agent-skills' })
     version = $version
     channel = 'release-candidate'
-    edition = 'dual'
-    compatibleAgents = @('OpenCode', 'Codex')
-    files = @($entries | Sort-Object target)
+    compatibleAgents = @('OpenCode', 'Codex', 'ZCode')
+    catalog = [ordered]@{
+        path = 'skill-catalog.json'
+        sha256 = Get-EggySha256 -Path (Join-Path $root 'skill-catalog.json')
+    }
+    hosts = [ordered]@{
+        Codex = $catalog.hosts.Codex
+        OpenCode = $catalog.hosts.OpenCode
+        ZCode = $catalog.hosts.ZCode
+    }
+    profiles = @($catalog.profiles.PSObject.Properties | ForEach-Object { $_.Name } | Sort-Object)
+    skillCount = @($catalog.skills).Count
+    files = $entries
+    sourceCommit = Get-EggySourceCommit -PackageRoot $root
 }
 
-$encoding = New-Object System.Text.UTF8Encoding($false)
-$json = $manifest | ConvertTo-Json -Depth 8
-$json = $json.Replace("`r`n", "`n")
-[System.IO.File]::WriteAllText((Join-Path $root 'release-manifest.json'), $json + "`n", $encoding)
-Write-Output "发布清单已生成：版本 $version，受管文件 $($entries.Count) 项。"
+Write-EggyJson -Path (Join-Path $root 'release-manifest.json') -Value ([pscustomobject]$manifest)
+Write-Output "发布清单已生成：版本 $version，技能 $($manifest.skillCount) 项，受管来源文件 $($entries.Count) 项。"

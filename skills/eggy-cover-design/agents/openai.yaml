@@ -1,0 +1,4 @@
+interface:
+  display_name: "蛋仔地图通用封面设计"
+  short_description: "基于任意地图的真实素材，制作不捏造玩法的高点击蛋仔封面"
+  default_prompt: "使用 $eggy-cover-design 为当前蛋仔地图制作忠于真实玩法的封面，并严格区分事实素材与风格参考。"

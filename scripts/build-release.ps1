@@ -5,53 +5,39 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-if (-not $PackageRoot) {
-    $PackageRoot = Join-Path $PSScriptRoot '..'
-}
-$root = (Resolve-Path -LiteralPath $PackageRoot).Path
-if (-not $OutputDirectory) {
-    $OutputDirectory = Join-Path $root 'dist'
-}
+if (-not $PackageRoot) { $PackageRoot = Join-Path $PSScriptRoot '..' }
+. (Join-Path $PSScriptRoot 'EggyAgent.Common.ps1')
 
-& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root 'scripts\generate-release-manifest.ps1') -PackageRoot $root
-if ($LASTEXITCODE -ne 0) {
-    throw '无法生成发布清单。'
-}
+$root = Resolve-EggyDirectory -Path $PackageRoot -Label '公开包目录'
+if (-not $OutputDirectory) { $OutputDirectory = Join-Path $root 'dist' }
+$output = ConvertTo-EggyFullPath -Path $OutputDirectory
+[System.IO.Directory]::CreateDirectory($output) | Out-Null
 
-& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root 'scripts\validate-release.ps1') -PackageRoot $root
-if ($LASTEXITCODE -ne 0) {
-    throw '候选包验证没有通过，禁止生成发布包。'
-}
+$generator = Join-Path $root 'scripts\generate-release-manifest.ps1'
+$validator = Join-Path $root 'scripts\validate-release.ps1'
+& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $generator -PackageRoot $root
+if ($LASTEXITCODE -ne 0) { throw '发布清单生成失败。' }
+& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $validator -PackageRoot $root
+if ($LASTEXITCODE -ne 0) { throw '候选包验证失败，停止构建。' }
 
-$manifest = Get-Content -LiteralPath (Join-Path $root 'release-manifest.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+$manifest = Assert-EggyPackageManifest -PackageRoot $root
 $version = [string]$manifest.version
-$stage = Join-Path $env:TEMP "eggy-agent-release-$version"
-if (Test-Path -LiteralPath $stage) {
-    Remove-Item -LiteralPath $stage -Recurse -Force
-}
+$stage = Join-Path ([System.IO.Path]::GetTempPath()) "eggy-agent-release-$version-$([Guid]::NewGuid().ToString('N'))"
 [System.IO.Directory]::CreateDirectory($stage) | Out-Null
-
-$include = @(
-    '.github', 'scripts', 'skills', 'templates', 'tests',
-    '.gitattributes', '.gitignore', 'CONTRIBUTING.md', 'INSTALL-给agent的安装任务书.md',
-    'LICENSE', 'README.md', 'START-HERE.md', 'UPDATE-给agent的升级任务书.md', 'VERSION', 'release-manifest.json'
-)
-foreach ($name in $include) {
-    $source = Join-Path $root $name
-    if (Test-Path -LiteralPath $source) {
-        Copy-Item -LiteralPath $source -Destination $stage -Recurse -Force
+try {
+    foreach ($entry in @(Get-EggyPublishSourceFiles -PackageRoot $root)) {
+        $source = Join-Path $root ([string]$entry.path).Replace('/', '\')
+        $destination = Join-Path $stage ([string]$entry.path).Replace('/', '\')
+        [System.IO.Directory]::CreateDirectory((Split-Path -Parent $destination)) | Out-Null
+        Copy-Item -LiteralPath $source -Destination $destination -Force
     }
+    Copy-EggyFileAtomic -Source (Join-Path $root 'release-manifest.json') -Destination (Join-Path $stage 'release-manifest.json')
+    $zipPath = Join-Path $output "eggy-agent-skills-$version.zip"
+    if (Test-Path -LiteralPath $zipPath -PathType Leaf) { Remove-Item -LiteralPath $zipPath -Force }
+    Compress-Archive -Path (Join-Path $stage '*') -DestinationPath $zipPath -CompressionLevel Optimal
+    $hash = (Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash.ToLowerInvariant()
+    Write-Output "发布包已生成：$zipPath"
+    Write-Output "SHA256：$hash"
+} finally {
+    if (Test-Path -LiteralPath $stage -PathType Container) { Remove-Item -LiteralPath $stage -Recurse -Force }
 }
-
-[System.IO.Directory]::CreateDirectory($OutputDirectory) | Out-Null
-$zipPath = Join-Path $OutputDirectory "eggy-agent-skills-$version.zip"
-if (Test-Path -LiteralPath $zipPath) {
-    Remove-Item -LiteralPath $zipPath -Force
-}
-Compress-Archive -Path (Join-Path $stage '*') -DestinationPath $zipPath -CompressionLevel Optimal
-$hash = (Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash.ToLowerInvariant()
-[System.IO.File]::WriteAllText("$zipPath.sha256", "$hash  $(Split-Path $zipPath -Leaf)`r`n", (New-Object System.Text.UTF8Encoding($false)))
-Remove-Item -LiteralPath $stage -Recurse -Force
-
-Write-Output "发布包：$zipPath"
-Write-Output "SHA256=$hash"

@@ -1,84 +1,74 @@
 # 给 Agent 的安装任务书
 
-> 目标：用户回答三个问题后，由脚本完成双版本工具包安装或登记新地图。你负责核对输入和结果，不负责自行合并文件。
+## 目标
 
-## 一、安装前确认
+把本仓库的技能按当前宿主和任务域安装到项目，不把官方手册、私人资料或地图运行文件复制进公开包。公开包是源码，项目目录中的技能是安装结果。
 
-向用户确认：
+## 安装前
 
-- 总工作区目录，例如 `<总工作区根>`。
-- 当前地图工程，例如 `<总工作区根>\LuaSource_地图名`。
-- `Single`（单人）或 `Multiplayer`（多人）。
-
-检查地图工程存在且位于总工作区内。脚本会交叉检查原点版或世界版标记；冲突或无法识别时必须停止。
-
-## 二、确认安装包
-
-本任务书所在目录就是安装包根目录。检查以下文件存在：
-
-```text
-VERSION
-release-manifest.json
-scripts\install-eggy-agent.ps1
-scripts\validate-release.ps1
-skills\eggy-lua-coding\SKILL.md
-```
-
-先执行候选包验证：
+1. 读取 `START-HERE.md` 和 `skill-catalog.json`。
+2. 在安装包根目录运行发布校验：
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "<安装包根>\scripts\validate-release.ps1" -PackageRoot "<安装包根>"
 ```
 
-验证失败时停止并逐字汇报错误，不修改发布清单或技能来强行通过。
+3. 校验失败时原样报告问题并停止，不手工改清单、删文件或跳过校验。
 
-## 三、执行安装
+## 地图安装
 
-单人地图：
+单人地图把 `PlayerMode` 设为 `Single`，多人地图设为 `Multiplayer`：
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "<安装包根>\scripts\install-eggy-agent.ps1" -WorkspaceRoot "<总工作区根>" -ProjectPath "<地图工程>" -PlayerMode Single
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "<安装包根>\scripts\install-eggy-agent.ps1" `
+  -WorkspaceRoot "<总工作区根>" `
+  -ProjectPath "<地图工程>" `
+  -PlayerMode Single `
+  -Agent Auto `
+  -Scope Project `
+  -Profile Auto
 ```
 
-多人地图把最后一个参数改为：
+`Profile Auto` 会依据工程版本选择 `map-origin`（原点版）或 `map-world`（世界版）。两种版本不能混用规则。需要可选技能时才添加 `-IncludeOptional`。
 
-```text
--PlayerMode Multiplayer
+## 辅助工具安装
+
+当前工作区是编辑器插件、命令行封装、转换器、文档工具或技能源码时，不传地图路径，不加载地图规则：
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "<安装包根>\scripts\install-eggy-agent.ps1" `
+  -WorkspaceRoot "<工具项目根>" `
+  -Agent Auto `
+  -Scope Project `
+  -Profile tooling
 ```
 
-安装器会完成：
+需要编辑器操作、节点改名、预设处理、文档转换等能力时，再明确添加 `-IncludeOptional`。
 
-- 校验发布清单和全部受管文件指纹。
-- 识别原点版或世界版，阻止版本标记冲突、工作区外路径和旧技能重复加载。
-- 检查地图是否为独立版本仓库；没有仓库时建立本地基线，基线不代表玩法正确。
-- 备份即将修改的文件。
-- 把十一项共享技能安装到总工作区的 `.agents\skills`（通用代理技能目录）；后续地图不会重复复制。
-- 把脚本、模板、发布清单和安装状态放入 `.eggy-agent`（工具包状态目录）。
-- 在总工作区与地图规则文件中只维护带标记的公共区块。
-- 只创建缺失的玩法需求、开发计划、资产清单、项目说明和开发日志。
+## 全局安装
 
-同一总工作区新增其他地图时，再用新地图路径运行一次同一安装命令。脚本只登记地图和创建该地图缺失的项目文档。
+全局范围必须由用户明确要求。执行前再次确认宿主和要安装的档案：
 
-## 四、验收
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "<安装包根>\scripts\install-eggy-agent.ps1" `
+  -WorkspaceRoot "<当前工作区>" `
+  -Agent Codex `
+  -Scope Global `
+  -Profile tooling
+```
 
-逐项检查：
+全局安装不会登记地图，也不会写地图规则和项目文档。
+全局技能启停只切换全局技能，不接受 `IncludeRules`；工作区和地图规则只能在项目范围内按需切换。
 
-- 安装结果明确写成功和版本号。
-- `.agents\skills` 中正好有十一项 `eggy-`（蛋仔）技能。
-- `.eggy-agent\install-state.json`（安装状态）存在。
-- 总工作区和地图的 `AGENTS.md`（代理规则）都含完整的受管起止标记。
-- 每张地图只有一份玩法需求、开发计划、资产清单、项目说明和开发日志；已有文档没有被覆盖。
-- 地图版本仓库根目录就是地图工程目录，已有用户改动没有被丢弃。
-- 安装器给出了准确恢复命令和备份位置。
+## 安装器会做什么
 
-任何一项不满足都不能告诉用户“装好了”。
+- 校验来源文件指纹，动态读取技能清单，不依赖固定技能数量。
+- 按宿主写入 `.agents/skills` 或 `.zcode/skills`，支持重复安装和同一工作区多张地图登记。
+- 地图首次安装时检查独立 Git 仓库，并在缺失时建立当前状态基线。
+- 只在地图缺失时创建一份需求文档、开发计划、资产清单、项目 README 和开发日志。
+- 只维护 `AGENTS.md` 中带 `EGGY-AGENT` 标记的公共区块，区块外用户内容不覆盖。
+- 记录安装状态、选定档案、宿主、版本、备份和已登记地图。
 
-## 五、向用户汇报
+## 验收
 
-只用大白话说明：
-
-1. 装了哪些东西，各自保护什么。
-2. 当前版本和备份位置。
-3. 版本基线只是恢复点，不代表地图功能正确。
-4. 用代理打开总工作区，不要只打开地图子目录；关闭当前会话并新建会话。
-5. 新建会话后先从一个很小的功能开始，并让用户亲自试玩确认效果。
+确认输出包含版本、宿主、档案、技能目录、状态路径和备份位置。确认用户已有文档没有被覆盖，官方生成目录没有被写入，地图规则明确标出原点版或世界版。安装完成后打开总工作区并新建会话；当前旧会话已读到的技能不会自动卸载。

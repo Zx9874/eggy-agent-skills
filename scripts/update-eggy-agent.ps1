@@ -1,185 +1,286 @@
-﻿[CmdletBinding(SupportsShouldProcess = $true)]
+﻿[CmdletBinding()]
 param(
-    [Parameter(Mandatory = $true)]
-    [string]$WorkspaceRoot
+    [string]$WorkspaceRoot = (Get-Location).Path,
+
+    [string]$PackageRoot,
+
+    [ValidateSet('Auto', 'Codex', 'OpenCode', 'ZCode')]
+    [string]$Agent = 'Auto',
+
+    [ValidateSet('Project', 'Global')]
+    [string]$Scope = 'Project'
 )
 
 $ErrorActionPreference = 'Stop'
-$packageRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
+if (-not $PackageRoot) { $PackageRoot = Join-Path $PSScriptRoot '..' }
 . (Join-Path $PSScriptRoot 'EggyAgent.Common.ps1')
 
-$workspace = Resolve-EggyDirectory -Path $WorkspaceRoot -Label '总工作区目录'
-$statePath = Join-Path $workspace '.eggy-agent\install-state.json'
-$rawState = Read-EggyJson -Path $statePath
-$oldSchemaVersion = if ($rawState.PSObject.Properties.Name -contains 'schemaVersion') { [int]$rawState.schemaVersion } else { 1 }
-$state = ConvertTo-EggyStateV2 -State $rawState
-$manifest = Assert-EggyPackageManifest -PackageRoot $packageRoot
-$rootRulesPath = Join-Path $workspace 'AGENTS.md'
-$templateReportPath = Join-Path $workspace '.eggy-agent\template-upgrade-report.md'
-$installedManifestPath = Join-Path $workspace '.eggy-agent\release-manifest.json'
-$skillTargetPrefix = '.agents/skills/'
+function Resolve-StateAgent {
+    param(
+        [Parameter(Mandatory = $true)][string]$Workspace,
+        [Parameter(Mandatory = $true)][string]$RequestedAgent,
+        [Parameter(Mandatory = $true)][string]$RequestedScope
+    )
 
-# 升级以登记清单为边界；任何地图移出总工作区、版本变化或规则冲突都整体停止。
-foreach ($project in @($state.projects)) {
-    $project.path = Resolve-EggyDirectory -Path ([string]$project.path) -Label '已登记地图工程'
-    if (-not (Test-EggyPathInside -Root $workspace -Candidate ([string]$project.path))) {
-        throw "已登记地图位于总工作区之外：$($project.path)"
+    if ($RequestedAgent -ne 'Auto') { return $RequestedAgent }
+    if ($RequestedScope -eq 'Project') {
+        $defaultState = Join-Path $Workspace '.eggy-agent\install-state.json'
+        if (Test-Path -LiteralPath $defaultState -PathType Leaf) {
+            $raw = Read-EggyJson -Path $defaultState
+            $value = [string](Get-EggyPropertyValue -Object $raw -Name 'agent' -Default 'Codex')
+            if (@('Codex', 'OpenCode', 'ZCode') -contains $value) { return $value }
+        }
+        $zcodeState = Join-Path $Workspace '.eggy-agent\install-state-zcode.json'
+        if (Test-Path -LiteralPath $zcodeState -PathType Leaf) { return 'ZCode' }
+        return 'Codex'
     }
-    $actualEdition = Get-EggyProjectEdition -ProjectPath ([string]$project.path)
-    if ([string]$project.edition -ne $actualEdition) {
-        throw "地图版本与安装记录不一致，拒绝自动改写：$($project.path)"
+    $globalRoot = Join-Path ([Environment]::GetFolderPath('UserProfile')) '.eggy-agent'
+    $states = @(Get-ChildItem -LiteralPath $globalRoot -Filter 'install-state-global-*.json' -File -ErrorAction SilentlyContinue)
+    if ($states.Count -eq 1) {
+        $raw = Read-EggyJson -Path $states[0].FullName
+        return [string](Get-EggyPropertyValue -Object $raw -Name 'agent' -Default 'Codex')
     }
+    if ($states.Count -gt 1) { throw '发现多个全局技能安装状态，请明确指定 Agent（宿主）。' }
+    return 'Codex'
 }
 
-$conflicts = @(Test-EggyInstalledFiles -WorkspaceRoot $workspace -State $state)
-if ([bool]$state.rulesEnabled) {
-    $rootBlock = Get-EggyManagedBlock -Path $rootRulesPath
-    if (-not $rootBlock -or (Get-EggyTextSha256 -Text $rootBlock) -ne [string]$state.rootRuleBlockSha256) {
-        $conflicts += 'AGENTS.md 中的总工作区受管规则块'
+function Assert-StateProjects {
+    param(
+        [Parameter(Mandatory = $true)][object]$State,
+        [Parameter(Mandatory = $true)][object]$Descriptor
+    )
+
+    if ($Descriptor.Scope -eq 'Global' -and @($State.projects).Count -gt 0) {
+        throw '全局技能状态不应登记地图工程。'
     }
-    foreach ($project in @($state.projects)) {
-        $projectRulesPath = Join-Path ([string]$project.path) 'AGENTS.md'
-        $projectBlock = Get-EggyManagedBlock -Path $projectRulesPath
-        if (-not $projectBlock -or (Get-EggyTextSha256 -Text $projectBlock) -ne [string]$project.projectRuleBlockSha256) {
-            $conflicts += "地图 AGENTS.md 中的受管规则块：$($project.path)"
+    foreach ($project in @($State.projects)) {
+        $path = Resolve-EggyDirectory -Path ([string]$project.path) -Label '已登记地图工程'
+        if (-not (Test-EggyPathInside -Root $Descriptor.WorkspaceRoot -Candidate $path)) {
+            throw "已登记地图位于总工作区之外：$path"
+        }
+        $actualEdition = Get-EggyProjectEdition -ProjectPath $path
+        if ([string]$project.edition -ne $actualEdition) {
+            throw "地图版本与安装记录不一致，拒绝自动改写：$path"
         }
     }
 }
 
-if ($conflicts.Count -gt 0) {
-    Write-Output '升级结果：未修改任何文件。以下受管内容被改过、缺失或损坏：'
-    $conflicts | Sort-Object -Unique | ForEach-Object { Write-Output "  $_" }
-    throw '请先让代理审查这些差异，再决定保留用户修改还是恢复公开版。'
+function Assert-StateRules {
+    param(
+        [Parameter(Mandatory = $true)][object]$State,
+        [Parameter(Mandatory = $true)][object]$Descriptor
+    )
+
+    if (-not [bool]$State.rulesEnabled) { return }
+    $rootPath = Join-Path $Descriptor.WorkspaceRoot 'AGENTS.md'
+    $rootBlock = Get-EggyManagedBlock -Path $rootPath
+    if (-not $rootBlock -or (Get-EggyTextSha256 -Text $rootBlock) -ne [string]$State.rootRuleBlockSha256) {
+        throw '总工作区受管规则块被改过、缺失或损坏，升级已停止。'
+    }
+    foreach ($project in @($State.projects)) {
+        $path = Join-Path ([string]$project.path) 'AGENTS.md'
+        $block = Get-EggyManagedBlock -Path $path
+        if (-not $block -or (Get-EggyTextSha256 -Text $block) -ne [string]$project.projectRuleBlockSha256) {
+            throw "地图受管规则块被改过、缺失或损坏，升级已停止：$path"
+        }
+    }
 }
 
-if ([string]$state.version -eq [string]$manifest.version -and $oldSchemaVersion -eq 2) {
-    Write-Output "升级结果：当前已经是版本 $($manifest.version)，文件完整，无需更新。"
+function Get-RecordDestination {
+    param(
+        [Parameter(Mandatory = $true)][object]$Descriptor,
+        [Parameter(Mandatory = $true)][object]$State,
+        [Parameter(Mandatory = $true)][object]$Record
+    )
+    return Get-EggyInstalledTargetPath -Descriptor $Descriptor -State $State -Target ([string]$Record.target)
+}
+
+function New-UpgradeReport {
+    param(
+        [Parameter(Mandatory = $true)][object]$OldState,
+        [Parameter(Mandatory = $true)][object[]]$NewRecords,
+        [Parameter(Mandatory = $true)][string]$Workspace
+    )
+
+    $oldMap = @{}
+    foreach ($entry in @($OldState.managedFiles)) { $oldMap[[string]$entry.target] = [string]$entry.sha256 }
+    $lines = @(
+        '# 项目文档模板升级对比报告',
+        '',
+        "生成时间：$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')",
+        "旧版本：$($OldState.version)",
+        '',
+        '> 项目长期文档属于用户。本次升级不会覆盖、创建或删除已有玩法文档。',
+        '',
+        '| 模板 | 旧指纹状态 | 新指纹状态 | 处理 |',
+        '|---|---|---|---|'
+    )
+    foreach ($name in @('需求文档模板.md', '开发计划模板.md', '资产清单模板.md', '项目README模板.md', '开发日志模板.md')) {
+        $target = '.eggy-agent/templates/' + $name
+        $new = @($NewRecords | Where-Object { [string]$_.target -eq $target } | Select-Object -First 1)
+        $oldStatus = if ($oldMap.ContainsKey($target)) { '已登记' } else { '旧包未登记' }
+        $newStatus = if ($new.Count -eq 1) { '已登记' } else { '新包缺失' }
+        $changed = if ($new.Count -eq 1 -and $oldMap.ContainsKey($target) -and $oldMap[$target] -eq [string]$new[0].sha256) { '未变化' } else { '有变化' }
+        $lines += "| $name | $oldStatus | $newStatus | $changed；现有文档需人工比较 |"
+    }
+    foreach ($project in @($OldState.projects)) {
+        $lines += @('', "## $([System.IO.Path]::GetFileName([string]$project.path))", '', '只更新受管规则区块，不改项目长期文档。')
+    }
+    return (($lines -join [Environment]::NewLine) + [Environment]::NewLine)
+}
+
+$script:Workspace = Resolve-EggyDirectory -Path $WorkspaceRoot -Label '总工作区目录'
+$script:Package = Resolve-EggyDirectory -Path $PackageRoot -Label '新版公开包目录'
+$script:ResolvedAgent = Resolve-StateAgent -Workspace $script:Workspace -RequestedAgent $Agent -RequestedScope $Scope
+$script:Catalog = Get-EggyCatalog -PackageRoot $script:Package
+$manifest = Assert-EggyPackageManifest -PackageRoot $script:Package
+$script:Descriptor = Get-EggyInstallDescriptor -WorkspaceRoot $script:Workspace -Agent $script:ResolvedAgent -Scope $Scope -Catalog $script:Catalog
+$stateInfo = Read-EggyInstallState -Descriptor $script:Descriptor
+$state = $stateInfo.State
+Assert-EggyStateContext -State $state -Descriptor $script:Descriptor
+Assert-StateProjects -State $state -Descriptor $script:Descriptor
+Assert-StateRules -State $state -Descriptor $script:Descriptor
+
+$oldConflicts = @(Test-EggyInstalledFiles -Descriptor $script:Descriptor -State $state)
+if ($oldConflicts.Count -gt 0) {
+    Write-Output '升级结果：未修改任何文件。以下受管文件被改过、缺失或损坏：'
+    $oldConflicts | ForEach-Object { Write-Output "  $_" }
+    throw '请先审查这些差异，再决定保留本地修改还是恢复公开版。'
+}
+
+$selectedSkills = @(Get-EggyStateDesiredSkills -State $state -Catalog $script:Catalog)
+foreach ($name in $selectedSkills) {
+    $record = Get-EggySkillRecord -Catalog $script:Catalog -Name $name
+    if (@($record.hosts) -notcontains $script:ResolvedAgent) { throw "新版技能不支持当前宿主：$name" }
+}
+$newRecords = @(Get-EggyManagedRecords -PackageRoot $script:Package -Catalog $script:Catalog -SkillName $selectedSkills -Descriptor $script:Descriptor)
+$oldByTarget = @{}
+foreach ($entry in @($state.managedFiles)) { $oldByTarget[[string]$entry.target] = $entry }
+$newByTarget = @{}
+foreach ($entry in $newRecords) { $newByTarget[[string]$entry.target] = $entry }
+
+$preflightConflicts = @()
+foreach ($entry in $newRecords) {
+    $destination = Get-RecordDestination -Descriptor $script:Descriptor -State $state -Record $entry
+    if (Test-Path -LiteralPath $destination -PathType Container) {
+        $preflightConflicts += "目标是目录：$destination"
+        continue
+    }
+    if ((Test-Path -LiteralPath $destination -PathType Leaf) -and -not $oldByTarget.ContainsKey([string]$entry.target)) {
+        if ((Get-EggySha256 -Path $destination) -ne ([string]$entry.sha256).ToLowerInvariant()) {
+            $preflightConflicts += "新包目标已有未登记文件：$destination"
+        }
+    }
+}
+foreach ($entry in @($state.managedFiles)) {
+    if (-not $newByTarget.ContainsKey([string]$entry.target)) {
+        $destination = Get-RecordDestination -Descriptor $script:Descriptor -State $state -Record $entry
+        if (Test-Path -LiteralPath $destination -PathType Container) {
+            $preflightConflicts += "待移除目标是目录：$destination"
+        }
+    }
+}
+if ($preflightConflicts.Count -gt 0) {
+    $preflightConflicts | Sort-Object -Unique | ForEach-Object { Write-Output "升级冲突：$_" }
+    throw '升级尚未修改任何文件。'
+}
+
+$sameFiles = $true
+if (@($state.managedFiles).Count -ne $newRecords.Count) { $sameFiles = $false }
+foreach ($entry in $newRecords) {
+    if (-not $oldByTarget.ContainsKey([string]$entry.target) -or
+        [string]$oldByTarget[[string]$entry.target].sha256 -ne [string]$entry.sha256) {
+        $sameFiles = $false
+        break
+    }
+}
+if ($sameFiles -and [int]$state.schemaVersion -eq 4 -and [string]$state.version -eq [string]$manifest.version) {
+    Write-Output "升级结果：当前已经是版本 $($manifest.version)，受管文件完整，无需更新。"
     exit 0
 }
 
-$destinations = Get-EggyManagedDestinationRecords -Manifest $manifest -WorkspaceRoot $workspace
-if (-not [bool]$state.enabled) {
-    foreach ($entry in $destinations) {
-        if ([string]$entry.target -like "$skillTargetPrefix*") {
-            $entry.destinationPath = Get-EggyInstalledTargetPath -WorkspaceRoot $workspace -State $state -Target ([string]$entry.target)
-        }
-    }
-}
-
-$newTargets = @($destinations.target) + @('.eggy-agent/release-manifest.json')
-$obsoleteFiles = @($state.managedFiles | Where-Object { $newTargets -notcontains [string]$_.target } | ForEach-Object {
-    Get-EggyInstalledTargetPath -WorkspaceRoot $workspace -State $state -Target ([string]$_.target)
-})
-$oldPaths = @($state.managedFiles | ForEach-Object {
-    Get-EggyInstalledTargetPath -WorkspaceRoot $workspace -State $state -Target ([string]$_.target)
-})
-$projectRulePaths = @($state.projects | ForEach-Object { Join-Path ([string]$_.path) 'AGENTS.md' })
-$backupPaths = @($oldPaths + $destinations.destinationPath + @(
-    $statePath, $rootRulesPath, $templateReportPath, $installedManifestPath
-) + $projectRulePaths | Sort-Object -Unique)
-$backupRoot = New-EggyBackup -WorkspaceRoot $workspace -Path $backupPaths -Reason 'update'
+$backupPaths = @($stateInfo.Path, (Join-Path $script:Descriptor.WorkspaceRoot 'AGENTS.md'), (Join-Path $script:Descriptor.StateRoot 'template-upgrade-report.md'))
+foreach ($project in @($state.projects)) { $backupPaths += Join-Path ([string]$project.path) 'AGENTS.md' }
+foreach ($entry in @($state.managedFiles + $newRecords)) { $backupPaths += Get-RecordDestination -Descriptor $script:Descriptor -State $state -Record $entry }
+$backupRoot = New-EggyBackup -WorkspaceRoot $script:Descriptor.BaseRoot -Path $backupPaths -Reason 'update'
 
 try {
-    foreach ($entry in $destinations) {
-        $source = Join-Path $packageRoot ($entry.sourcePath.Replace('/', '\'))
-        Copy-EggyFileAtomic -Source $source -Destination $entry.destinationPath
-    }
-    Copy-EggyFileAtomic -Source (Join-Path $packageRoot 'release-manifest.json') -Destination $installedManifestPath
-    foreach ($obsoleteFile in $obsoleteFiles) {
-        if (Test-Path -LiteralPath $obsoleteFile -PathType Leaf) {
-            Remove-Item -LiteralPath $obsoleteFile -Force
+    foreach ($entry in $newRecords) {
+        $source = Join-Path $script:Package ([string]$entry.sourcePath).Replace('/', '\')
+        $destination = Get-RecordDestination -Descriptor $script:Descriptor -State $state -Record $entry
+        if ((Get-EggySha256 -Path $destination) -ne ([string]$entry.sha256).ToLowerInvariant()) {
+            Copy-EggyFileAtomic -Source $source -Destination $destination
         }
     }
-
-    # 用户项目文档永不覆盖；报告按地图分组，只告诉代理模板变化和人工比较入口。
-    $reportLines = @(
-        '# 项目文档模板升级对比报告', '',
-        "生成时间：$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')", "旧版本：$($state.version)", "新版本：$($manifest.version)", '',
-        '> 项目长期文档属于用户。本次升级没有覆盖、创建或删除这些文件。'
-    )
-    foreach ($project in @($state.projects)) {
-        $reportLines += @('', "## $([System.IO.Path]::GetFileName([string]$project.path))", '', '| 项目文档 | 当前文件 | 模板变化 | 处理结果 |', '|---|---|---|---|')
-        foreach ($definition in @(
-            @('需求文档.md', '需求文档模板.md'), @('开发计划.md', '开发计划模板.md'),
-            @('资产清单.md', '资产清单模板.md'), @('README.md', '项目README模板.md'),
-            @('开发日志.md', '开发日志模板.md')
-        )) {
-            $rootCandidate = Join-Path ([string]$project.path) $definition[0]
-            $docsCandidate = Join-Path (Join-Path ([string]$project.path) 'docs') $definition[0]
-            $documentPath = if (Test-Path -LiteralPath $rootCandidate -PathType Leaf) {
-                $rootCandidate
-            } elseif (Test-Path -LiteralPath $docsCandidate -PathType Leaf) {
-                $docsCandidate
-            } else {
-                $null
-            }
-            $templateTarget = '.eggy-agent/templates/' + $definition[1]
-            $oldTemplate = @($state.managedFiles | Where-Object { [string]$_.target -eq $templateTarget } | Select-Object -First 1)
-            $newTemplate = @($manifest.files | Where-Object { [string]$_.target -eq $templateTarget } | Select-Object -First 1)
-            $changed = if ($oldTemplate.Count -eq 1 -and $newTemplate.Count -eq 1 -and
-                [string]$oldTemplate[0].sha256 -eq [string]$newTemplate[0].sha256) { '未变化' } else { '有变化' }
-            $displayPath = if ($documentPath) { Get-EggyRelativePath -Root $workspace -Path $documentPath } else { '未找到' }
-            $result = if ($documentPath) { '保留原文件，需要时人工比较' } else { '不自动新建' }
-            $reportLines += "| $($definition[0]) | $displayPath | $changed | $result |"
-        }
+    foreach ($entry in @($state.managedFiles | Where-Object { -not $newByTarget.ContainsKey([string]$_.target) })) {
+        $destination = Get-RecordDestination -Descriptor $script:Descriptor -State $state -Record $entry
+        if (Test-Path -LiteralPath $destination -PathType Leaf) { Remove-Item -LiteralPath $destination -Force }
     }
-    Write-EggyUtf8File -Path $templateReportPath -Content (($reportLines -join [Environment]::NewLine) + [Environment]::NewLine)
 
     $rootHash = [string]$state.rootRuleBlockSha256
     $updatedProjects = @()
     if ([bool]$state.rulesEnabled) {
-        $rootBody = Get-EggyRuleBody -TemplatePath (Join-Path $packageRoot 'templates\根规则受管块.md') -WorkspaceRoot $workspace
-        $newRootBlock = Set-EggyManagedBlock -Path $rootRulesPath -Body $rootBody
-        $rootHash = Get-EggyTextSha256 -Text $newRootBlock
+        $rootBody = Get-EggyRuleBody -TemplatePath (Join-Path $script:Package 'templates\根规则受管块.md') -WorkspaceRoot $script:Workspace
+        $rootBlock = Set-EggyManagedBlock -Path (Join-Path $script:Workspace 'AGENTS.md') -Body $rootBody
+        $rootHash = Get-EggyTextSha256 -Text $rootBlock
     }
     foreach ($project in @($state.projects)) {
         $projectHash = [string]$project.projectRuleBlockSha256
         if ([bool]$state.rulesEnabled) {
-            $projectBody = Get-EggyRuleBody -TemplatePath (Join-Path $packageRoot 'templates\项目规则受管块.md') `
-                -WorkspaceRoot $workspace -ProjectPath ([string]$project.path) `
+            $projectBody = Get-EggyRuleBody -TemplatePath (Join-Path $script:Package 'templates\项目规则受管块.md') `
+                -WorkspaceRoot $script:Workspace -ProjectPath ([string]$project.path) `
                 -PlayerMode ([string]$project.playerMode) -Edition ([string]$project.edition)
-            $newProjectBlock = Set-EggyManagedBlock -Path (Join-Path ([string]$project.path) 'AGENTS.md') -Body $projectBody
-            $projectHash = Get-EggyTextSha256 -Text $newProjectBlock
+            $projectBlock = Set-EggyManagedBlock -Path (Join-Path ([string]$project.path) 'AGENTS.md') -Body $projectBody
+            $projectHash = Get-EggyTextSha256 -Text $projectBlock
         }
         $updatedProjects += [pscustomobject]@{
             path = [string]$project.path
             edition = [string]$project.edition
             playerMode = [string]$project.playerMode
+            profile = [string]$project.profile
             projectRuleBlockSha256 = $projectHash
             userOwnedDocuments = @($project.userOwnedDocuments)
         }
     }
 
-    $managedFiles = @($destinations | ForEach-Object {
-        [pscustomobject]@{ target = $_.target; sha256 = Get-EggySha256 -Path $_.destinationPath }
-    }) + @([pscustomobject]@{
-        target = '.eggy-agent/release-manifest.json'
-        sha256 = Get-EggySha256 -Path $installedManifestPath
-    })
+    $reportPath = Join-Path $script:Descriptor.StateRoot 'template-upgrade-report.md'
+    Write-EggyUtf8File -Path $reportPath -Content (New-UpgradeReport -OldState $state -NewRecords $newRecords -Workspace $script:Workspace)
     $newState = [pscustomobject]@{
-        schemaVersion = 2
+        schemaVersion = 4
+        package = 'eggy-agent-skills'
         version = [string]$manifest.version
         installedAt = [string]$state.installedAt
         updatedAt = (Get-Date).ToString('o')
-        workspaceRoot = $workspace
+        workspaceRoot = $script:Workspace
+        installBaseRoot = $script:Descriptor.BaseRoot
+        agent = [string]$state.agent
+        agents = @($state.agents)
+        scope = [string]$state.scope
+        stateKey = [string]$script:Descriptor.StateKey
+        profile = [string]$state.profile
+        profiles = @($state.profiles)
         enabled = [bool]$state.enabled
         rulesEnabled = [bool]$state.rulesEnabled
-        managedFiles = $managedFiles
+        skillRootRelative = [string]$script:Descriptor.SkillRootRelative
+        disabledRootRelative = [string]$script:Descriptor.DisabledRootRelative
+        selectedSkills = @($selectedSkills)
+        managedFiles = @($newRecords)
         rootRuleBlockSha256 = $rootHash
-        projects = $updatedProjects
+        projects = @($updatedProjects)
+        sourceCommit = Get-EggySourceCommit -PackageRoot $script:Package
         latestBackup = $backupRoot
-        templateUpgradeReport = Get-EggyRelativePath -Root $workspace -Path $templateReportPath
+        templateUpgradeReport = Get-EggyRelativePath -Root $script:Descriptor.BaseRoot -Path $reportPath
     }
-    Write-EggyJson -Path $statePath -Value $newState
+    Write-EggyJson -Path $stateInfo.Path -Value $newState
 } catch {
-    Restore-EggyBackupInternal -WorkspaceRoot $workspace -BackupRoot $backupRoot
+    Restore-EggyBackupInternal -WorkspaceRoot $script:Descriptor.BaseRoot -BackupRoot $backupRoot
     throw
 }
 
-Write-Output "升级结果：已升级到版本 $($manifest.version)，登记地图 $(@($state.projects).Count) 张。"
-Write-Output "恢复命令：powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$(Join-Path $workspace '.eggy-agent\scripts\restore-eggy-agent.ps1')`" -WorkspaceRoot `"$workspace`" -BackupPath `"$backupRoot`""
-if ([bool]$state.enabled) {
-    Write-Output '重要：请用代理打开总工作区并新建会话，让代理加载新版公共技能。'
+Write-Output "升级结果：已升级到版本 $($manifest.version)，受管技能 $(@($newState.selectedSkills).Count) 项，登记地图 $(@($newState.projects).Count) 张。"
+Write-Output "备份位置：$backupRoot"
+if ([bool]$newState.enabled) {
+    Write-Output '请用代理打开总工作区并新建会话，让代理读取新版技能。'
 } else {
-    Write-Output '技能升级后仍保持停用；需要使用时先重新启用，再用代理打开总工作区并新建会话。'
+    Write-Output '升级后仍保持停用；需要使用时先启用，再新建会话。'
 }
