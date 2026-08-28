@@ -155,7 +155,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/install-eggy-agent.ps1",
-                      "sha256":  "b307bc0b64dada6d4b61bd8d77d71ffedd7414963cf7a457399f66391a625825"
+                      "sha256":  "32d39515dbd11e6a0427db90b21f8cad138ceff9d2ff72e87b060d0c73cb386a"
                   },
                   {
                       "path":  "scripts/log-audit.ps1",
@@ -183,7 +183,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/set-eggy-agent-enabled.ps1",
-                      "sha256":  "2a9c26206662c2ecbd2f27b17cc0756fa854041736ade29edcb9c980640cd60f"
+                      "sha256":  "41dae3f05cf063a407dd2a9ba7fce1eef815be35e8c02e2daa07cc1879b57ec6"
                   },
                   {
                       "path":  "scripts/sync-upstream.ps1",
@@ -197,7 +197,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/update-eggy-agent.ps1",
-                      "sha256":  "277584b1b4b6e3ebbbbb6672c672c5c2046ca009bee26904b7ea855738e21d94"
+                      "sha256":  "cc7a156570f55098a12b6cb1fbd21e8c4cf764a39321e58729f54868ab3dd47c"
                   },
                   {
                       "path":  "scripts/validate-release.ps1",
@@ -309,7 +309,7 @@
                       "category":  "skill",
                       "skill":  "eggy-eui-node-rename",
                       "installTarget":  "{SKILL_ROOT}/eggy-eui-node-rename/SKILL.md",
-                      "sha256":  "aca28db9f022bbe4b88ba82d9d8950bfc4efb0c452942077fed11bd5def90785"
+                      "sha256":  "8d27573d4557ccdf40db990a3942b4107e66a7f7899fe8926b40c08560a8f308"
                   },
                   {
                       "path":  "skills/eggy-game-planning/references/interview-map.md",
@@ -365,7 +365,7 @@
                       "category":  "skill",
                       "skill":  "eggy-lua-coding",
                       "installTarget":  "{SKILL_ROOT}/eggy-lua-coding/SKILL.md",
-                      "sha256":  "8b28d68a509fa716862cff562ea96c46118b117f0a9db3174d36052e459b6477"
+                      "sha256":  "daffffc05736d8b2a7538842ff4489b5546060c406f025e62534886d81924a2b"
                   },
                   {
                       "path":  "skills/eggy-lua-export/SKILL.md",
@@ -456,7 +456,7 @@
                       "category":  "skill",
                       "skill":  "eggy-preset-io",
                       "installTarget":  "{SKILL_ROOT}/eggy-preset-io/SKILL.md",
-                      "sha256":  "4107e9db50f1854a3d256cb7314ab9d0407cdfc310864cc0bb910eee0288f38c"
+                      "sha256":  "caf2ad568afe286e389d309031103990f181e6ab86cc9bbd085d2fb243101b75"
                   },
                   {
                       "path":  "skills/eggy-qa/SKILL.md",
@@ -470,7 +470,7 @@
                       "category":  "skill",
                       "skill":  "eggy-unit-model-swap",
                       "installTarget":  "{SKILL_ROOT}/eggy-unit-model-swap/SKILL.md",
-                      "sha256":  "074844c738b1551e6e2e9b9c17d5a7eab5df21cef46383f77b302fabf85cc2fc"
+                      "sha256":  "1b38dc2df2369ea30f7359dc28e618695a1067c7fff9c56a66f2ddad8877b505"
                   },
                   {
                       "path":  "skills/eggy-unslop/LICENSE",
@@ -617,7 +617,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "4b723306ac5480e0512a464dc5afaf3b1b21c83394fb893a094db8015167d663"
+                      "sha256":  "cf713418d6af20ca74951491122a8fda6661223fe56e76d2feae0632c3b7f558"
                   },
                   {
                       "path":  "UPDATE-给agent的升级任务书.md",
@@ -634,5 +634,5 @@
                       "sha256":  "44c34b7b3886975856dcd8810743e6f467ee399ecc3d42b02dca509905287b16"
                   }
               ],
-    "sourceCommit":  "01d38ee98bbc8d84f7f2bb91fafdec46b9e52641"
+    "sourceCommit":  "5239161f6a98c14ab81c116e863729ece9502c74"
 }

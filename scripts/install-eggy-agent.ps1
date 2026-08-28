@@ -348,9 +348,35 @@ if ($script:ProjectRoot) {
 
 $backupPaths = @($script:Descriptor.StatePath)
 if ($stateInfo -and $stateInfo.Path -ne $script:Descriptor.StatePath) { $backupPaths += $stateInfo.Path }
-$backupPaths += Join-Path $script:Descriptor.BaseRoot 'AGENTS.md'
-if ($script:ProjectRoot) { $backupPaths += Join-Path $script:ProjectRoot 'AGENTS.md' }
-foreach ($entry in $desiredRecords) { $backupPaths += Get-PathForRecord -Descriptor $script:Descriptor -State $pathState -Record $entry }
+
+# 安装器只保护本次确实会被覆盖或新建的受管文件。
+# 同一工作区追加地图时，大多数技能文件已经存在且内容不变，不应随安装重复复制。
+$projectAlreadyRegistered = $false
+if ($script:ProjectRoot) {
+    foreach ($project in @($registeredProjects)) {
+        if ((ConvertTo-EggyFullPath -Path ([string]$project.path)).Equals(
+            $script:ProjectRoot,
+            [System.StringComparison]::OrdinalIgnoreCase
+        )) {
+            $projectAlreadyRegistered = $true
+            break
+        }
+    }
+}
+if ($script:ProjectRoot -and -not $state -and -not $NoRules) {
+    $backupPaths += Join-Path $script:Descriptor.BaseRoot 'AGENTS.md'
+    $backupPaths += Join-Path $script:ProjectRoot 'AGENTS.md'
+} elseif ($script:ProjectRoot -and -not $projectAlreadyRegistered -and $state -and [bool]$state.rulesEnabled) {
+    $backupPaths += Join-Path $script:ProjectRoot 'AGENTS.md'
+}
+foreach ($entry in $desiredRecords) {
+    $destination = Get-PathForRecord -Descriptor $script:Descriptor -State $pathState -Record $entry
+    $needsWrite = -not (Test-Path -LiteralPath $destination -PathType Leaf)
+    if (-not $needsWrite) {
+        $needsWrite = (Get-EggySha256 -Path $destination) -ne ([string]$entry.sha256).ToLowerInvariant()
+    }
+    if ($needsWrite) { $backupPaths += $destination }
+}
 $backupRoot = New-EggyBackup -WorkspaceRoot $script:Descriptor.BaseRoot -Path $backupPaths -Reason $(if ($state) { 'register' } else { 'install' })
 $createdDocuments = @()
 

@@ -199,9 +199,25 @@ if ($sameFiles -and [int]$state.schemaVersion -eq 4 -and [string]$state.version 
     exit 0
 }
 
-$backupPaths = @($stateInfo.Path, (Join-Path $script:Descriptor.WorkspaceRoot 'AGENTS.md'), (Join-Path $script:Descriptor.StateRoot 'template-upgrade-report.md'))
-foreach ($project in @($state.projects)) { $backupPaths += Join-Path ([string]$project.path) 'AGENTS.md' }
-foreach ($entry in @($state.managedFiles + $newRecords)) { $backupPaths += Get-RecordDestination -Descriptor $script:Descriptor -State $state -Record $entry }
+$backupPaths = @($stateInfo.Path, (Join-Path $script:Descriptor.StateRoot 'template-upgrade-report.md'))
+if ([bool]$state.rulesEnabled) {
+    $backupPaths += Join-Path $script:Descriptor.WorkspaceRoot 'AGENTS.md'
+    foreach ($project in @($state.projects)) { $backupPaths += Join-Path ([string]$project.path) 'AGENTS.md' }
+}
+
+# 版本升级只备份会被替换或删除的文件；未变化的技能不随整包升级重复复制。
+foreach ($entry in $newRecords) {
+    $destination = Get-RecordDestination -Descriptor $script:Descriptor -State $state -Record $entry
+    $needsWrite = -not (Test-Path -LiteralPath $destination -PathType Leaf)
+    if (-not $needsWrite) {
+        $needsWrite = (Get-EggySha256 -Path $destination) -ne ([string]$entry.sha256).ToLowerInvariant()
+    }
+    if ($needsWrite) { $backupPaths += $destination }
+}
+foreach ($entry in @($state.managedFiles | Where-Object { -not $newByTarget.ContainsKey([string]$_.target) })) {
+    $destination = Get-RecordDestination -Descriptor $script:Descriptor -State $state -Record $entry
+    if (Test-Path -LiteralPath $destination -PathType Leaf) { $backupPaths += $destination }
+}
 $backupRoot = New-EggyBackup -WorkspaceRoot $script:Descriptor.BaseRoot -Path $backupPaths -Reason 'update'
 
 try {

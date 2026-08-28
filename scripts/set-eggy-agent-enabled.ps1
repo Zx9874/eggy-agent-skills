@@ -152,6 +152,11 @@ Assert-EggyStateContext -State $state -Descriptor $descriptor
 
 $skillNames = @(Get-EggyManagedSkillNamesFromState -State $state)
 if ($skillNames.Count -eq 0) { throw '安装状态中没有可启停的技能。' }
+$sourceLocation = if ([bool]$state.enabled) { 'Enabled' } else { 'Disabled' }
+foreach ($skillName in $skillNames) {
+    Assert-EggySkillDirectoryClean -Descriptor $descriptor -State $state -SkillName $skillName -Location $sourceLocation
+}
+
 $targetEnabled = $Mode -eq 'Enabled'
 $rulesAlreadyInMode = if ($IncludeRules) {
     Test-RulesAlreadyInMode -State $state -Descriptor $descriptor -Mode $Mode
@@ -165,10 +170,8 @@ if ([bool]$state.enabled -eq $targetEnabled -and $rulesAlreadyInMode) {
     exit 0
 }
 
-$sourceLocation = if ([bool]$state.enabled) { 'Enabled' } else { 'Disabled' }
 $destinationLocation = if ($targetEnabled) { 'Enabled' } else { 'Disabled' }
 foreach ($skillName in $skillNames) {
-    Assert-EggySkillDirectoryClean -Descriptor $descriptor -State $state -SkillName $skillName -Location $sourceLocation
     $sourceDirectory = if ($sourceLocation -eq 'Enabled') { Join-Path $descriptor.SkillRoot $skillName } else { Join-Path $descriptor.DisabledRoot $skillName }
     $destinationDirectory = if ($destinationLocation -eq 'Enabled') { Join-Path $descriptor.SkillRoot $skillName } else { Join-Path $descriptor.DisabledRoot $skillName }
     if (Test-Path -LiteralPath $destinationDirectory -PathType Leaf) {

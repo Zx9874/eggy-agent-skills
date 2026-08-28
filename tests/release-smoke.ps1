@@ -185,6 +185,10 @@ try {
     $disabledCount = @(Get-ChildItem (Join-Path $workspace '.eggy-agent\disabled-skills\agents') -Directory -ErrorAction SilentlyContinue).Count
     Assert-Test -Condition ($disabledCount -eq ($mapSkillCount + $optionalOriginCount)) -Message '停用技能数量不正确'
     Assert-Test -Condition ((Get-Content -Raw -Encoding UTF8 (Join-Path $workspace 'AGENTS.md')) -notmatch 'EGGY-AGENT:BEGIN') -Message '规则未停用'
+    $backupCountBeforeRepeatDisable = @(Get-ChildItem -LiteralPath $backupDirectory -Directory -ErrorAction SilentlyContinue).Count
+    Invoke-TestScript -ScriptPath $toggle -Arguments @('-WorkspaceRoot', $workspace, '-Mode', 'Disabled', '-IncludeRules') -ExpectedPattern '没有创建新备份' | Out-Null
+    $backupCountAfterRepeatDisable = @(Get-ChildItem -LiteralPath $backupDirectory -Directory -ErrorAction SilentlyContinue).Count
+    Assert-Test -Condition ($backupCountAfterRepeatDisable -eq $backupCountBeforeRepeatDisable) -Message '无变化的重复停用不应创建新备份'
     Invoke-TestScript -ScriptPath $toggle -Arguments @('-WorkspaceRoot', $workspace, '-Mode', 'Enabled', '-IncludeRules') | Out-Null
     Assert-Test -Condition (@(Get-ChildItem (Join-Path $workspace '.agents\skills') -Directory).Count -eq ($mapSkillCount + $optionalOriginCount)) -Message '启用后技能未恢复'
     $backupCountBeforeRepeatEnable = @(Get-ChildItem -LiteralPath $backupDirectory -Directory -ErrorAction SilentlyContinue).Count
@@ -214,6 +218,9 @@ try {
     # 用户改动受管技能后，升级在写入前整体停止。
     $nextPackage = Copy-TestPackage -Name '04 升级包'
     Set-TestPackageVersion -PackagePath $nextPackage -Version '0.1.0-rc.6'
+    $nextSkill = Join-Path $nextPackage 'skills\eggy-lua-coding\SKILL.md'
+    Write-TestFile -Path $nextSkill -Content ((Get-Content -Raw -Encoding UTF8 $nextSkill) + "`n升级测试只修改此技能`n")
+    Set-TestPackageVersion -PackagePath $nextPackage -Version '0.1.0-rc.6'
     $changedSkill = Join-Path $workspace '.agents\skills\eggy-lua-coding\SKILL.md'
     Write-TestFile -Path $changedSkill -Content ((Get-Content -Raw -Encoding UTF8 $changedSkill) + "`n用户本地修改`n")
     $beforeVersion = [string](Read-TestJson -Path $statePath).version
@@ -221,8 +228,13 @@ try {
     Assert-Test -Condition ([string](Read-TestJson -Path $statePath).version -eq $beforeVersion) -Message '升级冲突不应改变状态'
     Copy-Item -LiteralPath (Join-Path $package 'skills\eggy-lua-coding\SKILL.md') -Destination $changedSkill -Force
     Invoke-TestScript -ScriptPath (Join-Path $nextPackage 'scripts\update-eggy-agent.ps1') -Arguments @('-WorkspaceRoot', $workspace, '-PackageRoot', $nextPackage) -ExpectedPattern '0.1.0-rc.6' | Out-Null
-    Assert-Test -Condition ([string](Read-TestJson -Path $statePath).version -eq '0.1.0-rc.6') -Message '升级版本没有写入'
+    $updatedState = Read-TestJson -Path $statePath
+    Assert-Test -Condition ([string]$updatedState.version -eq '0.1.0-rc.6') -Message '升级版本没有写入'
     Assert-Test -Condition (Test-Path (Join-Path $workspace '.eggy-agent\template-upgrade-report.md')) -Message '升级报告没有生成'
+    $upgradeBackup = Read-TestJson -Path (Join-Path ([string]$updatedState.latestBackup) 'backup.json')
+    $upgradeBackupPaths = @($upgradeBackup.files | ForEach-Object { [string]$_.path })
+    Assert-Test -Condition ($upgradeBackupPaths -contains '.agents/skills/eggy-lua-coding/SKILL.md') -Message '升级备份缺少实际变化的技能文件'
+    Assert-Test -Condition ($upgradeBackupPaths -notcontains '.agents/skills/eggy-qa/SKILL.md') -Message '升级备份复制了未变化的技能文件'
 
     # 旧版单地图状态可以迁移到第四版。
     $legacyWorkspace = New-TestWorkspace -Name '05 旧状态'
