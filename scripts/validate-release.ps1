@@ -103,8 +103,24 @@ foreach ($relative in $requiredReminderFiles) {
     }
 }
 
-if (Test-Path -LiteralPath (Join-Path $root 'docs') -PathType Container) {
-    Add-ReleaseError '公开技能包禁止包含官方手册或私人知识库目录：docs'
+$docsRoot = Join-Path $root 'docs'
+$officialDocsRoot = Join-Path $docsRoot 'official'
+if (Test-Path -LiteralPath $docsRoot -PathType Container) {
+    if (-not (Test-Path -LiteralPath $officialDocsRoot -PathType Container)) {
+        Add-ReleaseError 'docs 目录只能包含已登记的公开参考资料目录：docs/official'
+    }
+    foreach ($relative in @('docs/official/README.md', 'docs/official/origin/目录.md', 'docs/official/world/目录.md')) {
+        $path = Join-Path $root ($relative.Replace('/', '\'))
+        if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
+            Add-ReleaseError "公开手册镜像缺少入口文件：$relative"
+        }
+    }
+    if ($manifest) {
+        $publishedDocs = @($manifest.files | Where-Object { ([string]$_.path) -like 'docs/*' })
+        if ($publishedDocs.Count -gt 0) {
+            Add-ReleaseError '官方手册镜像只能留在源码仓库，不能进入安装发布清单。'
+        }
+    }
 }
 
 $textExtensions = @('.md', '.ps1', '.json', '.yml', '.yaml', '.js', '.lua', '.txt')
@@ -125,7 +141,11 @@ foreach ($file in $trackedText) {
 }
 
 # 检查 Markdown 相对链接；模板占位符和外部链接不参与本地存在性检查。
-foreach ($file in @($trackedText | Where-Object { $_.Extension.ToLowerInvariant() -eq '.md' })) {
+# 官方手册镜像保留上游页面中的相对路径写法；只校验仓库自身文档的相对链接。
+$repositoryMarkdown = @($trackedText | Where-Object {
+    $_.Extension.ToLowerInvariant() -eq '.md' -and $_.FullName -notmatch '\\docs\\official\\(?:origin|world)(?:\\|$)'
+})
+foreach ($file in $repositoryMarkdown) {
     $content = Get-Content -LiteralPath $file.FullName -Raw -Encoding UTF8
     foreach ($match in [regex]::Matches($content, '\[[^\]]+\]\(([^)]+)\)')) {
         $target = $match.Groups[1].Value.Trim().Trim('<', '>')

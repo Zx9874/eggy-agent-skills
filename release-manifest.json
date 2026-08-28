@@ -1,7 +1,7 @@
 {
     "schemaVersion":  2,
     "package":  "eggy-agent-skills",
-    "version":  "0.1.0-rc.3",
+    "version":  "0.1.0-rc.4",
     "channel":  "release-candidate",
     "compatibleAgents":  [
                              "OpenCode",
@@ -78,14 +78,14 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "f6d471a1326932143f89f402c39967228987caf47d423b25f5bafb2b71c265bc"
+                      "sha256":  "ab0254e805e78bb34e0082f4b2751f33d15a4bf78d8570a26a71f18bdc7493bc"
                   },
                   {
                       "path":  "INSTALL-给agent的安装任务书.md",
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "924e4beb24e3e191421eb9c3dafa8f0844ab1a433ea8410b2e1b8e0e3f6c3598"
+                      "sha256":  "ec5755341dfcb6e8c041d45bf5038ff5911413b4b06f211420b94653bbef153d"
                   },
                   {
                       "path":  "LICENSE",
@@ -106,7 +106,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "f7c2e9075aabbde602144eca7bfc08011608a4b7268e2b6b870c2ba58a06f551"
+                      "sha256":  "2455bc269f3f84569083583d1aa0124b1a9812b14c589b050f02f51d66e86061"
                   },
                   {
                       "path":  "scripts/api-preflight.ps1",
@@ -169,7 +169,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/README.md",
-                      "sha256":  "3710633d47bff7285e7d3cfcff1495f9de29ddcee056d636add8abb32b4be313"
+                      "sha256":  "c0958580e83ed41293689a13981eaba2e3fc779e8e6f897a86b85116b8dd70ab"
                   },
                   {
                       "path":  "scripts/restore-eggy-agent.ps1",
@@ -204,7 +204,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/validate-release.ps1",
-                      "sha256":  "565cc61f3508eb2557b9660375ad0adbdb734ff9012d50364d277a3cb08733a3"
+                      "sha256":  "a182c33824a03352dc0b6bb429eacb01e65b889e0a4fc4e5072b0f55bf74ce9e"
                   },
                   {
                       "path":  "skill-catalog.json",
@@ -519,7 +519,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "9ba06d9b0918a7f6618d7619d0cbfdd7022ecb76beb670692de8e54be2eeae07"
+                      "sha256":  "76803964119bf5d1015380e5ad4314a8869f2a0173360c30306484eaace807bd"
                   },
                   {
                       "path":  "templates/地图.gitattributes模板",
@@ -575,7 +575,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/templates/可靠知识库README模板.md",
-                      "sha256":  "a96f6ac33491d584cc2eb55aedb0c703583981e45aece568d9965c2a8408bb4a"
+                      "sha256":  "5f158025349cd1c3df6ef8301e779d7c05b427f6b0d145f5756bb85717ebeb5f"
                   },
                   {
                       "path":  "templates/项目AGENTS模板.md",
@@ -631,8 +631,8 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "93f893b9b51cd2ee055332a64d4656e5bbbb652788acbaeaa7d1a6b32099d23f"
+                      "sha256":  "88dc6c9a8422a49fd83cb0490b89139d85bcc4e7429edba1fa57069d46f27c5b"
                   }
               ],
-    "sourceCommit":  "acab52c09b940a8f73a6834380cd49c350e4688c"
+    "sourceCommit":  "6aaa5e8da733f1124d82d52aaa4c02121e60a02c"
 }

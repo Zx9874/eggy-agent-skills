@@ -16,6 +16,8 @@
 | `sync-upstream.ps1` | 从维护者指定的 Ponytail 上游工作区更新只读快照、来源记录和许可证 |
 | `EggyAgent.Common.ps1` | 安装体系共用函数，不单独执行 |
 
+仓库 `docs/official` 是公开手册的源码参考区，不进入 `release-manifest.json`（发布清单）和安装压缩包。更新手册时只收录公开页面，并同步记录抓取日期、版本登记和来源；不要把本地整理稿混进官方镜像。
+
 首次安装的三个必要参数是 `WorkspaceRoot`（总工作区目录）、`ProjectPath`（地图工程目录）和 `PlayerMode`（单人或多人）。零基础用户不需要手写命令，应把仓库中的 `START-HERE.md`（代理安装入口）链接交给代理。
 
 ## 四个只读审查脚本
