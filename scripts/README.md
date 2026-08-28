@@ -9,7 +9,7 @@
 | `install-eggy-agent.ps1` | 首次安装共享技能，或向同一总工作区登记另一张地图 |
 | `update-eggy-agent.ps1` | 从新版候选包整体升级；受管文件有用户改动时在写入前停止 |
 | `set-eggy-agent-enabled.ps1` | 启用或停用技能，可选择同时处理公共规则区块 |
-| `restore-eggy-agent.ps1` | 从安装或升级产生的完整备份恢复 |
+| `restore-eggy-agent.ps1` | 从实际写入操作产生的安装、升级或启停备份恢复 |
 | `generate-release-manifest.ps1` | 依据当前技能、脚本和模板重建发布清单与文件指纹 |
 | `validate-release.ps1` | 校验版本、技能结构、入口文件、相对链接、敏感内容和遗留占位 |
 | `build-release.ps1` | 校验后生成候选压缩包及 SHA256（文件完整性指纹） |

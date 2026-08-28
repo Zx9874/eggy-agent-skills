@@ -26,7 +26,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "<新版包>\scripts\upd
 - 地图代码、资产和官方生成文件。
 - 普通工具项目的地图规则。
 
-模板变化只写入 `.eggy-agent/template-upgrade-report.md`，供代理按需比较。升级会建立备份，回退使用输出的恢复命令：
+模板变化只写入 `.eggy-agent/template-upgrade-report.md`，供代理按需比较。只有版本或受管文件确实发生变化时升级才建立一次备份；无变化时直接返回。需要回退时使用输出的恢复命令：
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "<工作区>\.eggy-agent\scripts\restore-eggy-agent.ps1" -WorkspaceRoot "<工作区>" -BackupPath "<备份目录>"

@@ -111,6 +111,37 @@ function Assert-RulesBeforeToggle {
     }
 }
 
+function Test-RulesAlreadyInMode {
+    param(
+        [Parameter(Mandatory = $true)][object]$State,
+        [Parameter(Mandatory = $true)][object]$Descriptor,
+        [Parameter(Mandatory = $true)][ValidateSet('Enabled', 'Disabled')][string]$Mode
+    )
+
+    $rootPath = Join-Path $Descriptor.WorkspaceRoot 'AGENTS.md'
+    $rootBlock = Get-EggyManagedBlock -Path $rootPath
+    if ($Mode -eq 'Enabled') {
+        if (-not [bool]$State.rulesEnabled -or -not $rootBlock -or
+            (Get-EggyTextSha256 -Text $rootBlock) -ne [string]$State.rootRuleBlockSha256) {
+            return $false
+        }
+        foreach ($project in @($State.projects)) {
+            $path = Join-Path ([string]$project.path) 'AGENTS.md'
+            $block = Get-EggyManagedBlock -Path $path
+            if (-not $block -or (Get-EggyTextSha256 -Text $block) -ne [string]$project.projectRuleBlockSha256) {
+                return $false
+            }
+        }
+        return $true
+    }
+
+    if ([bool]$State.rulesEnabled -or $rootBlock) { return $false }
+    foreach ($project in @($State.projects)) {
+        if (Get-EggyManagedBlock -Path (Join-Path ([string]$project.path) 'AGENTS.md')) { return $false }
+    }
+    return $true
+}
+
 $workspace = Resolve-EggyDirectory -Path $WorkspaceRoot -Label '总工作区目录'
 $resolvedAgent = Resolve-StateAgent -Workspace $workspace -RequestedAgent $Agent -RequestedScope $Scope
 $catalog = Get-InstalledCatalog -Workspace $workspace
@@ -122,8 +153,14 @@ Assert-EggyStateContext -State $state -Descriptor $descriptor
 $skillNames = @(Get-EggyManagedSkillNamesFromState -State $state)
 if ($skillNames.Count -eq 0) { throw '安装状态中没有可启停的技能。' }
 $targetEnabled = $Mode -eq 'Enabled'
-if ([bool]$state.enabled -eq $targetEnabled -and -not $IncludeRules) {
+$rulesAlreadyInMode = if ($IncludeRules) {
+    Test-RulesAlreadyInMode -State $state -Descriptor $descriptor -Mode $Mode
+} else {
+    $true
+}
+if ([bool]$state.enabled -eq $targetEnabled -and $rulesAlreadyInMode) {
     Write-Output "启停结果：当前已经是 $Mode 状态，无需重复操作。"
+    Write-Output '本次没有创建新备份。'
     Write-Output '当前会话已经读到的内容无法卸载；请新建会话后比较。'
     exit 0
 }

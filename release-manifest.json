@@ -1,7 +1,7 @@
 {
     "schemaVersion":  2,
     "package":  "eggy-agent-skills",
-    "version":  "0.1.0-rc.4",
+    "version":  "0.1.0-rc.5",
     "channel":  "release-candidate",
     "compatibleAgents":  [
                              "OpenCode",
@@ -85,7 +85,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "ec5755341dfcb6e8c041d45bf5038ff5911413b4b06f211420b94653bbef153d"
+                      "sha256":  "57f33798ebbee1e12a60c21e7ba5b60212ec418bf6c29e967aacc0292dc98205"
                   },
                   {
                       "path":  "LICENSE",
@@ -106,7 +106,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "2455bc269f3f84569083583d1aa0124b1a9812b14c589b050f02f51d66e86061"
+                      "sha256":  "ecd40eb4ebe22d1e6e111d7b879aff30704fb496433ecf6eacd985cb84183974"
                   },
                   {
                       "path":  "scripts/api-preflight.ps1",
@@ -169,7 +169,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/README.md",
-                      "sha256":  "c0958580e83ed41293689a13981eaba2e3fc779e8e6f897a86b85116b8dd70ab"
+                      "sha256":  "233dcc8c12933de839ada6cba151c56d416939af7819368ea99295906dfb41b6"
                   },
                   {
                       "path":  "scripts/restore-eggy-agent.ps1",
@@ -183,7 +183,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/set-eggy-agent-enabled.ps1",
-                      "sha256":  "01fc9666f3391aa66d13b1ffb372a647a57ad8798c7dcf2c259909a19c4bc708"
+                      "sha256":  "2a9c26206662c2ecbd2f27b17cc0756fa854041736ade29edcb9c980640cd60f"
                   },
                   {
                       "path":  "scripts/sync-upstream.ps1",
@@ -218,7 +218,7 @@
                       "category":  "skill",
                       "skill":  "eggy-api-research",
                       "installTarget":  "{SKILL_ROOT}/eggy-api-research/SKILL.md",
-                      "sha256":  "174466e5148ebe254171b6787147e167e64b7789c5877e2339cf8ce7fbe814e0"
+                      "sha256":  "9df7ddf63caf81b975d0f548596b18f2625b6f804b63295143df6b853c8bce20"
                   },
                   {
                       "path":  "skills/eggy-cover-design/agents/openai.yaml",
@@ -281,7 +281,7 @@
                       "category":  "skill",
                       "skill":  "eggy-dev-plan",
                       "installTarget":  "{SKILL_ROOT}/eggy-dev-plan/references/task-files.md",
-                      "sha256":  "a5e950810bbb7ad7c9540c24eac816b71aadef06ca93c18fecb5eb8f7432a0f9"
+                      "sha256":  "822f3957d9fe1cce7cec2265bd3a4dd7fd332362c65dee205206c3569c5c9b5c"
                   },
                   {
                       "path":  "skills/eggy-dev-plan/SKILL.md",
@@ -309,7 +309,7 @@
                       "category":  "skill",
                       "skill":  "eggy-eui-node-rename",
                       "installTarget":  "{SKILL_ROOT}/eggy-eui-node-rename/SKILL.md",
-                      "sha256":  "2f9cae01e5e99dac970ea1716005e99137cf2467865a00a247bc0207bb7dde49"
+                      "sha256":  "aca28db9f022bbe4b88ba82d9d8950bfc4efb0c452942077fed11bd5def90785"
                   },
                   {
                       "path":  "skills/eggy-game-planning/references/interview-map.md",
@@ -358,21 +358,21 @@
                       "category":  "skill",
                       "skill":  "eggy-lua-coding",
                       "installTarget":  "{SKILL_ROOT}/eggy-lua-coding/references/hard-rules.md",
-                      "sha256":  "45783f32bea2c60df81cd085ffca51f4b619eee88191f9cfc16f115d280c74d3"
+                      "sha256":  "00845f6547e4888631435675ca946a5d986e5349dbc37b461d9ea6610e5f4ef7"
                   },
                   {
                       "path":  "skills/eggy-lua-coding/SKILL.md",
                       "category":  "skill",
                       "skill":  "eggy-lua-coding",
                       "installTarget":  "{SKILL_ROOT}/eggy-lua-coding/SKILL.md",
-                      "sha256":  "775cce21fcf0f8f43d1dc202d0e3e5e1e916d7f7791a4be104bbc379e01ac1b3"
+                      "sha256":  "8b28d68a509fa716862cff562ea96c46118b117f0a9db3174d36052e459b6477"
                   },
                   {
                       "path":  "skills/eggy-lua-export/SKILL.md",
                       "category":  "skill",
                       "skill":  "eggy-lua-export",
                       "installTarget":  "{SKILL_ROOT}/eggy-lua-export/SKILL.md",
-                      "sha256":  "9483d572276129fcca36f3f29d99d15e0f5a0913b9688800c831a28b5330e375"
+                      "sha256":  "4881563a5a4bec4c4ebd921dd3e66adb2720bb4c912ee23d5734c53b41605fdd"
                   },
                   {
                       "path":  "skills/eggy-playtest/SKILL.md",
@@ -470,7 +470,7 @@
                       "category":  "skill",
                       "skill":  "eggy-unit-model-swap",
                       "installTarget":  "{SKILL_ROOT}/eggy-unit-model-swap/SKILL.md",
-                      "sha256":  "4919677d56e5843fe2d0d93ed72e362d6edb26926f32e27bbffdcd2b89498772"
+                      "sha256":  "074844c738b1551e6e2e9b9c17d5a7eab5df21cef46383f77b302fabf85cc2fc"
                   },
                   {
                       "path":  "skills/eggy-unslop/LICENSE",
@@ -519,7 +519,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "76803964119bf5d1015380e5ad4314a8869f2a0173360c30306484eaace807bd"
+                      "sha256":  "92fe7716897d79bc2614ee42a82052de3c5587bfb1a777bc2d66e1d143d3b2d0"
                   },
                   {
                       "path":  "templates/地图.gitattributes模板",
@@ -547,28 +547,28 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/templates/根规则受管块.md",
-                      "sha256":  "3e847d07e636298202d0ef14dce98ad81afab1189d38651204442f8c161fc946"
+                      "sha256":  "c930e5e17451ec2e766f64c1eb7d2e1c5f3dc409b597782837d0fbd9bb9297f4"
                   },
                   {
                       "path":  "templates/红线卡模板.md",
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/templates/红线卡模板.md",
-                      "sha256":  "643da32eae2c699afea26ce2a5e6f512244ffa2ce5e11de1298099efa0f6ec57"
+                      "sha256":  "3f5e990a05ca8c531f41412e43cd17366ca58d165b23520fcb148303443b98dc"
                   },
                   {
                       "path":  "templates/开发计划模板.md",
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/templates/开发计划模板.md",
-                      "sha256":  "082bbff183c02a0f5a80b1d0bb29f6c0ead63ec78ff02c0101e742c92530acee"
+                      "sha256":  "86e0e35734bbe0c804bb9fc36d5b188216f0d171f04670eea3575ec585d97fd7"
                   },
                   {
                       "path":  "templates/开发日志模板.md",
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/templates/开发日志模板.md",
-                      "sha256":  "7bd3a8e1c315736203bef712c7ff73c3fd5af5f958f86fc54741a346b114fe43"
+                      "sha256":  "5027b7d34ac7ef4bef92606f911492742c7f9aaa0ea872d550e6d2fa7db350ea"
                   },
                   {
                       "path":  "templates/可靠知识库README模板.md",
@@ -596,7 +596,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/templates/项目规则受管块.md",
-                      "sha256":  "7058c682d5daa563c216fc215b1a31ce8a9be6c428b8eef78cf7f634b4e7a056"
+                      "sha256":  "6db590cbd32676f932b8d5cae9e64b79653a63314b4f33c263efa2f45845c8f1"
                   },
                   {
                       "path":  "templates/需求文档模板.md",
@@ -617,22 +617,22 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "2d1d1b62da65216290eeafb07193eaaccd8c66701cde2f16831ddbf8b3e6d777"
+                      "sha256":  "4b723306ac5480e0512a464dc5afaf3b1b21c83394fb893a094db8015167d663"
                   },
                   {
                       "path":  "UPDATE-给agent的升级任务书.md",
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "7237e9c3b08560017a792da7c46781d830a427d7373796b2c896c2bb7ca48bea"
+                      "sha256":  "1ed7f3c6ac4b6962e8128c25d105c1cddb0dbbe2f1d2b25570a217e961283a8c"
                   },
                   {
                       "path":  "VERSION",
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "88dc6c9a8422a49fd83cb0490b89139d85bcc4e7429edba1fa57069d46f27c5b"
+                      "sha256":  "44c34b7b3886975856dcd8810743e6f467ee399ecc3d42b02dca509905287b16"
                   }
               ],
-    "sourceCommit":  "6aaa5e8da733f1124d82d52aaa4c02121e60a02c"
+    "sourceCommit":  "01d38ee98bbc8d84f7f2bb91fafdec46b9e52641"
 }

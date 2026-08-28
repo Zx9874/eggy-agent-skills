@@ -166,7 +166,11 @@ try {
     Assert-Test -Condition (@(Get-ChildItem (Join-Path $workspace '.agents\skills') -Directory).Count -eq $combinedSkillCount) -Message '追加地图不应复制技能目录'
     Assert-TestText -Text (Get-Content -Raw -Encoding UTF8 (Join-Path $world.Project 'AGENTS.md')) -Pattern '世界版' -Message '世界版规则未写入'
     Assert-TestText -Text (Get-Content -Raw -Encoding UTF8 (Join-Path $world.Project 'AGENTS.md')) -Pattern '服务端权威状态' -Message '世界版运行侧规则缺失'
+    $backupDirectory = Join-Path $workspace '.eggy-agent\backups'
+    $backupCountBeforeRepeatInstall = @(Get-ChildItem -LiteralPath $backupDirectory -Directory -ErrorAction SilentlyContinue).Count
     Invoke-MapInstall -Map $world -ExpectedPattern '无需重复安装' | Out-Null
+    $backupCountAfterRepeatInstall = @(Get-ChildItem -LiteralPath $backupDirectory -Directory -ErrorAction SilentlyContinue).Count
+    Assert-Test -Condition ($backupCountAfterRepeatInstall -eq $backupCountBeforeRepeatInstall) -Message '无变化的重复安装不应创建新备份'
 
     # 可选档案只在明确要求时加入。
     Invoke-TestScript -ScriptPath (Join-Path $package 'scripts\install-eggy-agent.ps1') -Arguments @(
@@ -183,6 +187,10 @@ try {
     Assert-Test -Condition ((Get-Content -Raw -Encoding UTF8 (Join-Path $workspace 'AGENTS.md')) -notmatch 'EGGY-AGENT:BEGIN') -Message '规则未停用'
     Invoke-TestScript -ScriptPath $toggle -Arguments @('-WorkspaceRoot', $workspace, '-Mode', 'Enabled', '-IncludeRules') | Out-Null
     Assert-Test -Condition (@(Get-ChildItem (Join-Path $workspace '.agents\skills') -Directory).Count -eq ($mapSkillCount + $optionalOriginCount)) -Message '启用后技能未恢复'
+    $backupCountBeforeRepeatEnable = @(Get-ChildItem -LiteralPath $backupDirectory -Directory -ErrorAction SilentlyContinue).Count
+    Invoke-TestScript -ScriptPath $toggle -Arguments @('-WorkspaceRoot', $workspace, '-Mode', 'Enabled', '-IncludeRules') -ExpectedPattern '没有创建新备份' | Out-Null
+    $backupCountAfterRepeatEnable = @(Get-ChildItem -LiteralPath $backupDirectory -Directory -ErrorAction SilentlyContinue).Count
+    Assert-Test -Condition ($backupCountAfterRepeatEnable -eq $backupCountBeforeRepeatEnable) -Message '无变化的重复启用不应创建新备份'
 
     # ZCode 使用独立发现目录，且不污染 .agents/skills。
     $zWorkspace = New-TestWorkspace -Name '02 ZCode 工具'
@@ -205,15 +213,15 @@ try {
 
     # 用户改动受管技能后，升级在写入前整体停止。
     $nextPackage = Copy-TestPackage -Name '04 升级包'
-    Set-TestPackageVersion -PackagePath $nextPackage -Version '0.1.0-rc.4'
+    Set-TestPackageVersion -PackagePath $nextPackage -Version '0.1.0-rc.6'
     $changedSkill = Join-Path $workspace '.agents\skills\eggy-lua-coding\SKILL.md'
     Write-TestFile -Path $changedSkill -Content ((Get-Content -Raw -Encoding UTF8 $changedSkill) + "`n用户本地修改`n")
     $beforeVersion = [string](Read-TestJson -Path $statePath).version
     Invoke-TestScript -ScriptPath (Join-Path $nextPackage 'scripts\update-eggy-agent.ps1') -Arguments @('-WorkspaceRoot', $workspace, '-PackageRoot', $nextPackage) -ExpectFailure -ExpectedPattern '受管文件' | Out-Null
     Assert-Test -Condition ([string](Read-TestJson -Path $statePath).version -eq $beforeVersion) -Message '升级冲突不应改变状态'
     Copy-Item -LiteralPath (Join-Path $package 'skills\eggy-lua-coding\SKILL.md') -Destination $changedSkill -Force
-    Invoke-TestScript -ScriptPath (Join-Path $nextPackage 'scripts\update-eggy-agent.ps1') -Arguments @('-WorkspaceRoot', $workspace, '-PackageRoot', $nextPackage) -ExpectedPattern '0.1.0-rc.4' | Out-Null
-    Assert-Test -Condition ([string](Read-TestJson -Path $statePath).version -eq '0.1.0-rc.4') -Message '升级版本没有写入'
+    Invoke-TestScript -ScriptPath (Join-Path $nextPackage 'scripts\update-eggy-agent.ps1') -Arguments @('-WorkspaceRoot', $workspace, '-PackageRoot', $nextPackage) -ExpectedPattern '0.1.0-rc.6' | Out-Null
+    Assert-Test -Condition ([string](Read-TestJson -Path $statePath).version -eq '0.1.0-rc.6') -Message '升级版本没有写入'
     Assert-Test -Condition (Test-Path (Join-Path $workspace '.eggy-agent\template-upgrade-report.md')) -Message '升级报告没有生成'
 
     # 旧版单地图状态可以迁移到第四版。
