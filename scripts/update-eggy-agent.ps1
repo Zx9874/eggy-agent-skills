@@ -58,6 +58,9 @@ function Assert-StateProjects {
         if (-not (Test-EggyPathInside -Root $Descriptor.WorkspaceRoot -Candidate $path)) {
             throw "已登记地图位于总工作区之外：$path"
         }
+        if ($path.Equals($Descriptor.WorkspaceRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
+            throw '共享技能不能安装到地图工程；已登记地图与总工作区重合，请先核对错误安装并迁移。尚未写入任何文件。'
+        }
         $actualEdition = Get-EggyProjectEdition -ProjectPath $path
         if ([string]$project.edition -ne $actualEdition) {
             throw "地图版本与安装记录不一致，拒绝自动改写：$path"
@@ -130,6 +133,9 @@ function New-UpgradeReport {
 }
 
 $script:Workspace = Resolve-EggyDirectory -Path $WorkspaceRoot -Label '总工作区目录'
+if ($Scope -eq 'Project') {
+    Assert-EggyWorkspaceOutsideMap -WorkspaceRoot $script:Workspace
+}
 $script:Package = Resolve-EggyDirectory -Path $PackageRoot -Label '新版公开包目录'
 $script:ResolvedAgent = Resolve-StateAgent -Workspace $script:Workspace -RequestedAgent $Agent -RequestedScope $Scope
 $script:Catalog = Get-EggyCatalog -PackageRoot $script:Package

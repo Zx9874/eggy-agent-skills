@@ -85,7 +85,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "57f33798ebbee1e12a60c21e7ba5b60212ec418bf6c29e967aacc0292dc98205"
+                      "sha256":  "6cfaf5d7b326ac54e1faea93ef1dd7a57518784b9dad0fdc964b19dbbf31bcf6"
                   },
                   {
                       "path":  "LICENSE",
@@ -106,7 +106,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "ecd40eb4ebe22d1e6e111d7b879aff30704fb496433ecf6eacd985cb84183974"
+                      "sha256":  "9b17990edd85a43a654f0aa1e458f66ce598d64443f86f6de7794297a41273d6"
                   },
                   {
                       "path":  "scripts/api-preflight.ps1",
@@ -127,7 +127,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/EggyAgent.Common.ps1",
-                      "sha256":  "8ab2c5bef1b45a81427038f7147d336641d0941e4bfa3498a75e7187ce6c5519"
+                      "sha256":  "d861193f13d6b4087c63c8ae9b3e05d78830b33c568c34068137afe5088c55e0"
                   },
                   {
                       "path":  "scripts/export-contract-audit.ps1",
@@ -155,7 +155,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/install-eggy-agent.ps1",
-                      "sha256":  "32d39515dbd11e6a0427db90b21f8cad138ceff9d2ff72e87b060d0c73cb386a"
+                      "sha256":  "1e19bbd440e7c714dab0c0233698ecbd2a6b16c6de38b632447052036a2dcdc6"
                   },
                   {
                       "path":  "scripts/log-audit.ps1",
@@ -169,7 +169,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/README.md",
-                      "sha256":  "233dcc8c12933de839ada6cba151c56d416939af7819368ea99295906dfb41b6"
+                      "sha256":  "f17beb39d6ee2fe52f0ce567f35b4e273c0dbfeb6cce560a0d8f8ee5e622f75d"
                   },
                   {
                       "path":  "scripts/restore-eggy-agent.ps1",
@@ -197,7 +197,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/update-eggy-agent.ps1",
-                      "sha256":  "cc7a156570f55098a12b6cb1fbd21e8c4cf764a39321e58729f54868ab3dd47c"
+                      "sha256":  "67f73a5ca70108dcd78e87e18687b3b3aebe4fc848e683d5535c84d009b28c93"
                   },
                   {
                       "path":  "scripts/validate-release.ps1",
@@ -519,7 +519,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "92fe7716897d79bc2614ee42a82052de3c5587bfb1a777bc2d66e1d143d3b2d0"
+                      "sha256":  "43691c98cb735b7e3f79518e1360187211337f835776cacb439856cf7f917496"
                   },
                   {
                       "path":  "templates/地图.gitattributes模板",
@@ -617,14 +617,14 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "cf713418d6af20ca74951491122a8fda6661223fe56e76d2feae0632c3b7f558"
+                      "sha256":  "b5bf8701a44b6305fab1f3c59d22834534b197ec2891588c04278e9fcacbd7f3"
                   },
                   {
                       "path":  "UPDATE-给agent的升级任务书.md",
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "1ed7f3c6ac4b6962e8128c25d105c1cddb0dbbe2f1d2b25570a217e961283a8c"
+                      "sha256":  "6b112a4bf3f183360cc85b5fce3577a95f6e5bcfaff4eef8ba8fbf1b4ffb81bd"
                   },
                   {
                       "path":  "VERSION",
@@ -634,5 +634,5 @@
                       "sha256":  "44c34b7b3886975856dcd8810743e6f467ee399ecc3d42b02dca509905287b16"
                   }
               ],
-    "sourceCommit":  "358eeebcf8c9bbf14815f7ad3034d6b4d4822473"
+    "sourceCommit":  "8306ddc8261b2b9859d7dcdcd8d2716a2348acc3"
 }

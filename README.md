@@ -1,6 +1,6 @@
 # 蛋仔 Agent 技能包
 
-这是一个面向蛋仔地图作者和蛋仔辅助工具开发者的可复用 Agent（代理）技能包。公开仓库是唯一源码；安装到项目后的 `.agents/skills` 或 `.zcode/skills` 只是运行副本。
+这是一个面向蛋仔地图作者和蛋仔辅助工具开发者的可复用 Agent（代理）技能包。公开仓库是唯一源码；总工作区中的 `.agents/skills` 或 `.zcode/skills` 只是运行副本，地图之间共用一份。
 
 ## 解决什么问题
 
@@ -28,11 +28,24 @@
 
 把仓库地址交给 Agent（代理）：
 
-> 帮我安装这个蛋仔 Agent 技能包：`https://github.com/Zx9874/eggy-agent-skills`
+> 帮我安装这个蛋仔 Agent 技能包：`https://github.com/Zx9874/eggy-agent-skills`。先读仓库的 `START-HERE.md`；地图开发的共享技能装在地图外的总工作区，不要装进 `LuaSource_*` 地图工程。
 
-默认是项目级安装。地图安装时代理只需要确认总工作区、地图工程和单人或多人；辅助工具安装时不询问地图。全局安装必须由用户明确提出，不能被默认流程偷偷修改。
+**地图开发默认安装到总工作区，不是某一张地图里。** 代理安装入口是 [`START-HERE.md`](START-HERE.md)，具体命令见[安装任务书](INSTALL-给agent的安装任务书.md)。脚本参数 `Scope Project` 表示不装全局，其安装根是 `WorkspaceRoot`（总工作区），不是 `ProjectPath`（地图工程）。
 
-OpenCode（开放代码代理）和 Codex（代码代理）使用项目 `.agents/skills`；ZCode（智谱代码代理）使用 `.zcode/skills`。安装后请用代理打开总工作区，并在新会话中使用技能。
+```text
+<总工作区>/
+  .agents/skills/       共享技能；ZCode 改用 .zcode/skills/
+  .eggy-agent/         安装脚本、状态和必要备份
+  AGENTS.md           工作区公共规则
+  LuaSource_Example/  单张地图，也可放在更深一层的地图分类目录
+    AGENTS.md         这张地图的规则
+    README.md         这张地图的总览
+    docs/             这张地图的需求、计划等文档
+```
+
+即使只有一张地图，也把共享技能放在地图外。第二张地图继续登记到同一总工作区，不复制第二套技能。整份仓库和手册也不得下载到地图同步目录。
+
+地图安装时只确认总工作区、地图工程和单人或多人。辅助工具则安装到工具自身项目根，不询问地图。全局安装必须由用户明确提出。OpenCode（开放代码代理）与 Codex（代码代理）使用 `.agents/skills`；ZCode（智谱代码代理）使用 `.zcode/skills`。安装后请用代理打开总工作区并新建会话。
 
 ## 官方手册镜像
 

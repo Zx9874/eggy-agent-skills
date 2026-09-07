@@ -72,6 +72,32 @@ function Test-EggyRelativePathSafe {
     return $true
 }
 
+function Assert-EggyWorkspaceOutsideMap {
+    param(
+        [Parameter(Mandatory = $true)][string]$WorkspaceRoot,
+        [string]$ProjectPath
+    )
+
+    # 共享技能、安装状态和备份不能进入编辑器同步目录。
+    # 只检查目标及祖先，不扫描其他地图，也不擅自改选上级目录。
+    $workspace = Resolve-EggyDirectory -Path $WorkspaceRoot -Label '总工作区目录'
+    if ($ProjectPath) {
+        $project = Resolve-EggyDirectory -Path $ProjectPath -Label '地图工程目录'
+        if (Test-EggyPathInside -Root $project -Candidate $workspace) {
+            throw '共享技能不能安装到地图工程或其子目录。WorkspaceRoot（总工作区）必须是地图外的上级目录，ProjectPath（地图工程）仅用于登记地图。尚未写入任何文件。'
+        }
+    }
+    $directory = Get-Item -LiteralPath $workspace
+    while ($null -ne $directory) {
+        if ($directory.Name -like 'LuaSource_*' -or
+            (Test-Path -LiteralPath (Join-Path $directory.FullName 'eggy.json') -PathType Leaf) -or
+            (Test-Path -LiteralPath (Join-Path $directory.FullName '.codemaker\config.json') -PathType Leaf)) {
+            throw "共享技能不能安装到地图工程或其子目录：$($directory.FullName)。请显式指定地图外的总工作区；已有错误安装先核对再迁移，不在原位置继续安装或升级。尚未写入任何文件。"
+        }
+        $directory = $directory.Parent
+    }
+}
+
 function Get-EggyRelativePath {
     param(
         [Parameter(Mandatory = $true)][string]$Root,

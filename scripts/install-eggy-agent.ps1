@@ -1,6 +1,6 @@
 ﻿[CmdletBinding()]
 param(
-    [string]$WorkspaceRoot = (Get-Location).Path,
+    [string]$WorkspaceRoot,
 
     [string]$ProjectPath,
 
@@ -194,7 +194,13 @@ function Get-PathForRecord {
     return Get-EggyInstalledTargetPath -Descriptor $Descriptor -State $State -Target ([string]$Record.target)
 }
 
+if ([string]::IsNullOrWhiteSpace($WorkspaceRoot)) {
+    throw '请显式指定 WorkspaceRoot（总工作区），安装器不默认使用当前目录。地图共享技能应装在地图外的总工作区，辅助工具技能装在工具项目根。尚未写入任何文件。'
+}
 $script:ResolvedWorkspace = Resolve-EggyDirectory -Path $WorkspaceRoot -Label '总工作区目录'
+if ($Scope -eq 'Project') {
+    Assert-EggyWorkspaceOutsideMap -WorkspaceRoot $script:ResolvedWorkspace -ProjectPath $ProjectPath
+}
 $script:ResolvedAgent = Resolve-EggyAgentName -Agent $Agent
 $script:Catalog = Get-EggyCatalog -PackageRoot $packageRoot
 
@@ -317,6 +323,7 @@ if ($state -and -not $stateInfo.WasMigrated -and [string]$state.version -eq $cur
     }
     if ($sameManagedFiles -and $registeredCurrent) {
         Write-Output "安装结果：版本 $currentVersion、档案和受管文件均已存在，无需重复安装。"
+        Write-Output "总工作区：$script:ResolvedWorkspace"
         Write-Output "技能目录：$($script:Descriptor.SkillRoot)"
         exit 0
     }
@@ -497,10 +504,12 @@ if ($state) {
 } else {
     Write-Output "安装结果：已安装 $editionText 档案到 $($script:ResolvedAgent)，当前受管技能 $skillCount 项。"
 }
+Write-Output "总工作区：$script:ResolvedWorkspace"
 Write-Output "技能目录：$($script:Descriptor.SkillRoot)"
 Write-Output "安装状态：$($script:Descriptor.StatePath)"
 Write-Output "备份位置：$backupRoot"
 if ($script:ProjectRoot) {
+    Write-Output "已登记地图：$script:ProjectRoot；共享技能不复制到地图目录。"
     Write-Output "地图版本：$editionText；游玩模式：$(if ($PlayerMode -eq 'Multiplayer') { '多人' } else { '单人' })"
     Write-Output '地图已使用独立 Git（版本记录）仓库；初始基线不代表玩法已经通过试玩。'
 }

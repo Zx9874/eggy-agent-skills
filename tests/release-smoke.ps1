@@ -74,6 +74,16 @@ function New-TestWorkspace {
     return $path
 }
 
+function Get-TestTreeSignature {
+    param([Parameter(Mandatory = $true)][string]$Path)
+
+    # 连同空目录和文件内容核对，防止拒绝安装前已经创建技能、备份或 Git。
+    return (@(Get-ChildItem -LiteralPath $Path -Recurse -Force | Sort-Object FullName | ForEach-Object {
+        $hash = if ($_.PSIsContainer) { 'directory' } else { Get-EggySha256 -Path $_.FullName }
+        "$(Get-EggyRelativePath -Root $Path -Path $_.FullName)|$hash"
+    }) -join "`n")
+}
+
 function New-TestMap {
     param(
         [Parameter(Mandatory = $true)][string]$Workspace,
@@ -140,6 +150,44 @@ try {
     $optionalOriginCount = @(Get-EggyProfileSkillNames -Catalog $catalog -Profile 'map-origin-optional').Count
     $toolingSkillCount = @(Get-EggyProfileSkillNames -Catalog $catalog -Profile 'tooling').Count
 
+    # 地图同步目录不能承载共享安装；各种错误入口均须在任何写入前拒绝。
+    $boundaryWorkspace = New-TestWorkspace -Name '00 安装目录边界'
+    $installer = Join-Path $package 'scripts\install-eggy-agent.ps1'
+    foreach ($hostName in @('Codex', 'OpenCode', 'ZCode')) {
+        $edition = if ($hostName -eq 'Codex') { 'Origin' } else { 'World' }
+        $boundaryMap = New-TestMap -Workspace $boundaryWorkspace -Name $hostName -Edition $edition
+        $before = Get-TestTreeSignature -Path $boundaryMap.Project
+        Invoke-MapInstall -Map ([pscustomobject]@{Workspace=$boundaryMap.Project; Project=$boundaryMap.Project}) `
+            -Agent $hostName -ExpectFailure -ExpectedPattern '共享技能不能安装到地图工程' | Out-Null
+        Assert-Test -Condition ((Get-TestTreeSignature -Path $boundaryMap.Project) -eq $before) -Message "$hostName 错误安装改动了地图"
+    }
+    $nestedWorkspace = Join-Path $boundaryMap.Project '工具 子目录'
+    [System.IO.Directory]::CreateDirectory($nestedWorkspace) | Out-Null
+    $before = Get-TestTreeSignature -Path $boundaryMap.Project
+    Invoke-TestScript -ScriptPath $installer -Arguments @(
+        '-WorkspaceRoot', $nestedWorkspace, '-Agent', 'ZCode', '-Profile', 'tooling'
+    ) -ExpectFailure -ExpectedPattern '共享技能不能安装到地图工程' | Out-Null
+    Invoke-TestScript -ScriptPath (Join-Path $package 'scripts\update-eggy-agent.ps1') -Arguments @(
+        '-WorkspaceRoot', $nestedWorkspace, '-PackageRoot', $package
+    ) -ExpectFailure -ExpectedPattern '共享技能不能安装到地图工程' | Out-Null
+    Push-Location -LiteralPath $boundaryMap.Project
+    try {
+        Invoke-TestScript -ScriptPath $installer -Arguments @('-Agent', 'Codex', '-Profile', 'tooling') `
+            -ExpectFailure -ExpectedPattern '显式指定 WorkspaceRoot' | Out-Null
+    } finally {
+        Pop-Location
+    }
+    Assert-Test -Condition ((Get-TestTreeSignature -Path $boundaryMap.Project) -eq $before) -Message '子目录、升级或默认当前目录入口写入了地图'
+
+    # 非标准名称仍按工程标记识别，不可换成工具档案绕过地图边界。
+    $renamedMap = New-TestWorkspace -Name '00 非标准名称工程'
+    Write-TestFile -Path (Join-Path $renamedMap 'eggy.json') -Content '{"isSEMap":true}'
+    $before = Get-TestTreeSignature -Path $renamedMap
+    Invoke-TestScript -ScriptPath $installer -Arguments @(
+        '-WorkspaceRoot', $renamedMap, '-Agent', 'OpenCode', '-Profile', 'tooling'
+    ) -ExpectFailure -ExpectedPattern '共享技能不能安装到地图工程' | Out-Null
+    Assert-Test -Condition ((Get-TestTreeSignature -Path $renamedMap) -eq $before) -Message '改名工程被错误写入'
+
     # 原点版首次安装、用户文件保留、项目独立 Git 和动态技能数量。
     $workspace = New-TestWorkspace -Name '01 中文 工作区'
     $origin = New-TestMap -Workspace $workspace -Name '原点 空白图' -Edition Origin
@@ -164,6 +212,11 @@ try {
     $state = Read-TestJson -Path $statePath
     Assert-Test -Condition (@($state.projects).Count -eq 2) -Message '同一工作区应登记两张地图'
     Assert-Test -Condition (@(Get-ChildItem (Join-Path $workspace '.agents\skills') -Directory).Count -eq $combinedSkillCount) -Message '追加地图不应复制技能目录'
+    foreach ($map in @($origin, $world)) {
+        foreach ($relative in @('.agents', '.zcode', '.eggy-agent')) {
+            Assert-Test -Condition (-not (Test-Path -LiteralPath (Join-Path $map.Project $relative))) -Message "共享安装产物不应进入地图：$relative"
+        }
+    }
     Assert-TestText -Text (Get-Content -Raw -Encoding UTF8 (Join-Path $world.Project 'AGENTS.md')) -Pattern '世界版' -Message '世界版规则未写入'
     Assert-TestText -Text (Get-Content -Raw -Encoding UTF8 (Join-Path $world.Project 'AGENTS.md')) -Pattern '服务端权威状态' -Message '世界版运行侧规则缺失'
     $backupDirectory = Join-Path $workspace '.eggy-agent\backups'
