@@ -267,7 +267,7 @@
                       "category":  "skill",
                       "skill":  "eggy-design",
                       "installTarget":  "{SKILL_ROOT}/eggy-design/SKILL.md",
-                      "sha256":  "670d1811a87bb02684324dcb4b7ae38412e04d9290dc4dc797829d0f1054efc1"
+                      "sha256":  "addef1163801acef92762f5e8ec9f80e1c9280a1501bcb1093a45b2ef128784b"
                   },
                   {
                       "path":  "skills/eggy-dev-plan/references/project-overview.md",
@@ -316,7 +316,7 @@
                       "category":  "skill",
                       "skill":  "eggy-game-planning",
                       "installTarget":  "{SKILL_ROOT}/eggy-game-planning/references/interview-map.md",
-                      "sha256":  "8351157d1cf885143d1fbb4d23d409eb0f5f921dfdc69141964800bc4d49c7b5"
+                      "sha256":  "cfa9b76590b542e560fbc418772511b20c5772e6ed2ec102e8d3c7fff5a6fd54"
                   },
                   {
                       "path":  "skills/eggy-game-planning/references/origin-planning.md",
@@ -365,7 +365,7 @@
                       "category":  "skill",
                       "skill":  "eggy-lua-coding",
                       "installTarget":  "{SKILL_ROOT}/eggy-lua-coding/SKILL.md",
-                      "sha256":  "daffffc05736d8b2a7538842ff4489b5546060c406f025e62534886d81924a2b"
+                      "sha256":  "c8fe4721832b64cdcf3e0e0cf1768d91c2801eeef0fdac5d78faad70e1d6900a"
                   },
                   {
                       "path":  "skills/eggy-lua-export/SKILL.md",
@@ -463,7 +463,7 @@
                       "category":  "skill",
                       "skill":  "eggy-qa",
                       "installTarget":  "{SKILL_ROOT}/eggy-qa/SKILL.md",
-                      "sha256":  "223b57a45f0522a87bf1662756920784635e38a5b8696a901a7d8dd78fd05c59"
+                      "sha256":  "6ffaea8958d1a667ea3ad61e0c5066a91eedbae171635c9d9acd28e8dea38bc4"
                   },
                   {
                       "path":  "skills/eggy-unit-model-swap/SKILL.md",
@@ -634,5 +634,5 @@
                       "sha256":  "44c34b7b3886975856dcd8810743e6f467ee399ecc3d42b02dca509905287b16"
                   }
               ],
-    "sourceCommit":  "5239161f6a98c14ab81c116e863729ece9502c74"
+    "sourceCommit":  "358eeebcf8c9bbf14815f7ad3034d6b4d4822473"
 }
