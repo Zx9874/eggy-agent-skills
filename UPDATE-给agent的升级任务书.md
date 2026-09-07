@@ -5,7 +5,7 @@
 ## 准备
 
 1. 把新版仓库放到新的临时目录。
-2. 读取新版 `VERSION`（版本号）和 `release-manifest.json`（发布清单）。
+2. 读取新版 `VERSION`（版本号）、`release-manifest.json`（发布清单），以及 `CHANGELOG.md`（更新日志）中本次新增的条目，先确认是否有安装参数或迁移要求；不通读全部历史日志。
 3. 运行新版 `scripts/validate-release.ps1`；失败立即停止。
 4. 确认地图外的总工作区存在 `.eggy-agent/install-state.json`（工作区安装状态）；不要把 `WorkspaceRoot` 指向单张地图。旧状态若在地图里，先报告错误安装的位置并确认迁移，不在原地继续升级或自动删除。使用 ZCode（智谱代码代理）或全局状态时，按状态文件选择对应宿主，不要猜。
 

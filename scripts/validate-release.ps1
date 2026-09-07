@@ -31,7 +31,7 @@ function Test-RequiredFile {
 
 foreach ($required in @(
     'README.md', 'START-HERE.md', 'INSTALL-给agent的安装任务书.md',
-    'UPDATE-给agent的升级任务书.md', 'CONTRIBUTING.md', 'LICENSE', 'VERSION',
+    'UPDATE-给agent的升级任务书.md', 'CONTRIBUTING.md', 'CHANGELOG.md', 'LICENSE', 'VERSION',
     'release-manifest.json', 'skill-catalog.json', 'tests/release-smoke.ps1'
 )) {
     Test-RequiredFile -RelativePath $required

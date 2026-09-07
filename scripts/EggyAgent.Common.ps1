@@ -1097,7 +1097,7 @@ function Get-EggyPublishSourceFiles {
             $files += @(Get-ChildItem -LiteralPath $folder -Recurse -File)
         }
     }
-    foreach ($name in @('README.md', 'START-HERE.md', 'INSTALL-给agent的安装任务书.md', 'UPDATE-给agent的升级任务书.md', 'CONTRIBUTING.md', 'LICENSE', 'VERSION', '.gitignore', '.gitattributes', 'skill-catalog.json')) {
+    foreach ($name in @('README.md', 'START-HERE.md', 'INSTALL-给agent的安装任务书.md', 'UPDATE-给agent的升级任务书.md', 'CONTRIBUTING.md', 'CHANGELOG.md', 'LICENSE', 'VERSION', '.gitignore', '.gitattributes', 'skill-catalog.json')) {
         $path = Join-Path $root $name
         if (Test-Path -LiteralPath $path -PathType Leaf) { $files += Get-Item -LiteralPath $path }
     }

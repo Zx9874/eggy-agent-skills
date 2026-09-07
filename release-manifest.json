@@ -74,11 +74,18 @@
                       "sha256":  "13c23ca28795e0025d7ff88636cfe5e39a9e4ab5dcc8bd98c6686a320d618bff"
                   },
                   {
+                      "path":  "CHANGELOG.md",
+                      "category":  "documentation",
+                      "skill":  "",
+                      "installTarget":  "",
+                      "sha256":  "30ed66bdd87109a7181cec77762e7e2f8492952269a0edb60094adb4b71b5ce4"
+                  },
+                  {
                       "path":  "CONTRIBUTING.md",
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "ab0254e805e78bb34e0082f4b2751f33d15a4bf78d8570a26a71f18bdc7493bc"
+                      "sha256":  "8d3b1e6813a8a931118cbffd66ffc9a6e827e2612d2285f2454177752a2946b4"
                   },
                   {
                       "path":  "INSTALL-给agent的安装任务书.md",
@@ -106,7 +113,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "9b17990edd85a43a654f0aa1e458f66ce598d64443f86f6de7794297a41273d6"
+                      "sha256":  "da73d067006b49db16842c0f10ba24db7ee1eff4130a29e6834a745c6c56847e"
                   },
                   {
                       "path":  "scripts/api-preflight.ps1",
@@ -127,7 +134,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/EggyAgent.Common.ps1",
-                      "sha256":  "d861193f13d6b4087c63c8ae9b3e05d78830b33c568c34068137afe5088c55e0"
+                      "sha256":  "df95b2297bdfa84aed17ffc56d0df9326fe44f3ca00d4e9da4a06d6f46be5009"
                   },
                   {
                       "path":  "scripts/export-contract-audit.ps1",
@@ -204,7 +211,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/validate-release.ps1",
-                      "sha256":  "a182c33824a03352dc0b6bb429eacb01e65b889e0a4fc4e5072b0f55bf74ce9e"
+                      "sha256":  "732463ebb2e2b912a9cc184a4000474036078aa683bc2ea249088a4b1b0208c7"
                   },
                   {
                       "path":  "skill-catalog.json",
@@ -624,7 +631,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "6b112a4bf3f183360cc85b5fce3577a95f6e5bcfaff4eef8ba8fbf1b4ffb81bd"
+                      "sha256":  "ce9e7027d914919e9a65b0d9f93a435adb48d641f0add2557d2bdfdc01dbaf7b"
                   },
                   {
                       "path":  "VERSION",
@@ -634,5 +641,5 @@
                       "sha256":  "44c34b7b3886975856dcd8810743e6f467ee399ecc3d42b02dca509905287b16"
                   }
               ],
-    "sourceCommit":  "8306ddc8261b2b9859d7dcdcd8d2716a2348acc3"
+    "sourceCommit":  "9d026d09c34df06e8a4b27f7273c8a9d95f28664"
 }
