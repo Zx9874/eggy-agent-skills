@@ -4,7 +4,7 @@
 
 ## 可以贡献
 
-- 更容易让零基础作者和能力一般的代理完成安装的入口说明。
+- 让首次使用者和编程助手更容易理解的安装说明。
 - 经对应版本当前工程、官方资料或受控测试验证的流程修正。
 - 能复现的安装、升级、技能触发和脚本问题。
 - 不包含私人地图内容的最小测试样例。
@@ -28,5 +28,21 @@
 6. 删除日志和文档中的账号、密钥及私人地图编号。
 7. 修改官方手册镜像时，只同步公开页面；不要把旧稿、个人整理或未公开内容放入 `docs/official`。
 8. 影响安装、技能行为或使用方式的改动，同批次更新一次 `CHANGELOG.md`（更新日志），说明变化、影响和必要的升级注意事项。公开推送时把本批“待发布”条目移入对应日期或版本；不记录每次保存、搜索或重复测试，纯排版修正无需单独记一条。
+
+## 文档分工
+
+首页面向使用者，说明功能、安装方法和资料入口；安装任务书面向执行安装的编程助手；维护和验证要求放在本文件。内部讨论、排查笔记和给维护者的交代不写进产品介绍。
+
+## 本地验证
+
+在 Windows PowerShell 5.1 环境运行以下命令。
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\generate-release-manifest.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\validate-release.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\release-smoke.ps1
+```
+
+测试使用系统临时目录，不读取真实地图，也不启动编辑器。公开推送前审查差异和隐私扫描结果。
 
 玩法是否正确仍需真实编辑器试玩；自动检查通过不等于功能完成。

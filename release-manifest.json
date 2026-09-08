@@ -78,14 +78,14 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "30ed66bdd87109a7181cec77762e7e2f8492952269a0edb60094adb4b71b5ce4"
+                      "sha256":  "03e498dbbfacd4e7a773ff1459396ee15677c3b98c2912f820a2ff33cbc7d981"
                   },
                   {
                       "path":  "CONTRIBUTING.md",
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "8d3b1e6813a8a931118cbffd66ffc9a6e827e2612d2285f2454177752a2946b4"
+                      "sha256":  "5acae39ddcb3ae6634e0e84ea93aeb6ba5df28870756125e78cc6b50819987fe"
                   },
                   {
                       "path":  "INSTALL-给agent的安装任务书.md",
@@ -113,7 +113,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "da73d067006b49db16842c0f10ba24db7ee1eff4130a29e6834a745c6c56847e"
+                      "sha256":  "554a1e0fb5817a04faabbad3fcf535a7bff6ece59991dfc11f91e176002b4a12"
                   },
                   {
                       "path":  "scripts/api-preflight.ps1",
@@ -641,5 +641,5 @@
                       "sha256":  "44c34b7b3886975856dcd8810743e6f467ee399ecc3d42b02dca509905287b16"
                   }
               ],
-    "sourceCommit":  "9d026d09c34df06e8a4b27f7273c8a9d95f28664"
+    "sourceCommit":  "9cce9ab32ff365bae83da1c2f9635f6d7cfb80af"
 }
