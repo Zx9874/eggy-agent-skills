@@ -147,7 +147,18 @@ $repositoryMarkdown = @($trackedText | Where-Object {
 })
 foreach ($file in $repositoryMarkdown) {
     $content = Get-Content -LiteralPath $file.FullName -Raw -Encoding UTF8
-    foreach ($match in [regex]::Matches($content, '\[[^\]]+\]\(([^)]+)\)')) {
+    # 行内代码中的安装脚本路径也要检查；只看 Markdown 链接会漏掉实际执行命令。
+    foreach ($match in [regex]::Matches($content, '\.eggy-agent[\\/]scripts[\\/]([A-Za-z0-9_.-]+\.ps1)')) {
+        $target = '.eggy-agent/scripts/' + $match.Groups[1].Value
+        if ($manifest -and -not @($manifest.files | Where-Object { [string]$_.installTarget -eq $target }).Count) {
+            Add-ReleaseError "引用了未发布的安装脚本：$($file.FullName) -> $target"
+        }
+    }
+    $links = @([regex]::Matches($content, '\[[^\]]+\]\(([^)]+)\)'))
+    if ($file.FullName -notmatch '\\references\\upstream(?:\\|$)') {
+        $links += @([regex]::Matches($content, '`((?:\.\.[\\/])+[^`\r\n]+)`'))
+    }
+    foreach ($match in $links) {
         $target = $match.Groups[1].Value.Trim().Trim('<', '>')
         if ([string]::IsNullOrWhiteSpace($target) -or $target -match '^(?:https?://|mailto:|#|\{\{)') { continue }
         $target = ($target -split '[?#]', 2)[0]

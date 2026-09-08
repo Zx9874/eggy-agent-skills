@@ -204,6 +204,12 @@ try {
     Assert-TestText -Text (Get-Content -Raw -Encoding UTF8 (Join-Path $origin.Project 'AGENTS.md')) -Pattern '地图用户内容' -Message '地图用户内容被覆盖'
     Assert-TestText -Text (Get-Content -Raw -Encoding UTF8 (Join-Path $origin.Project 'docs\需求文档.md')) -Pattern '用户玩法内容' -Message '玩法需求被覆盖'
     Assert-Test -Condition (Test-Path (Join-Path $origin.Project 'docs\开发计划.md')) -Message '缺失开发计划未创建'
+    $installedRules = Get-Content -Raw -Encoding UTF8 (Join-Path $workspace 'AGENTS.md')
+    Assert-TestText -Text $installedRules -Pattern '以下各节仅用于地图开发' -Message '地图规则缺少任务域边界'
+    Assert-TestText -Text $installedRules -Pattern '不询问地图，不创建地图文档' -Message '共享工作区缺少辅助工具路线'
+    $installedPlan = Get-Content -Raw -Encoding UTF8 (Join-Path $origin.Project 'docs\开发计划.md')
+    Assert-TestText -Text $installedPlan -Pattern '## 活跃任务' -Message '开发计划未使用任务索引'
+    Assert-Test -Condition ($installedPlan -notmatch '规则执行回执|接口查证记录|开发与测试记录') -Message '开发计划仍要求重复过程记录'
     Assert-Test -Condition ((& git -C $origin.Project rev-parse --show-toplevel).Trim().EndsWith((Split-Path $origin.Project -Leaf))) -Message '地图没有独立 Git 仓库'
 
     # 同一工作区追加世界版，不复制第二套技能，并保留版本隔离。
@@ -219,6 +225,25 @@ try {
     }
     Assert-TestText -Text (Get-Content -Raw -Encoding UTF8 (Join-Path $world.Project 'AGENTS.md')) -Pattern '世界版' -Message '世界版规则未写入'
     Assert-TestText -Text (Get-Content -Raw -Encoding UTF8 (Join-Path $world.Project 'AGENTS.md')) -Pattern '服务端权威状态' -Message '世界版运行侧规则缺失'
+
+    # 用安装后的脚本验证示例路径与参数；只测试文本分类，不执行假地图的 Lua。
+    $logAudit = Join-Path $workspace '.eggy-agent\scripts\log-audit.ps1'
+    $logFile = Join-Path $origin.Project 'LogCheck.lua'
+    foreach ($level in 1..4) {
+        Write-TestFile -Path $logFile -Content "LuaAPI.log('check', $level)"
+        $result = Invoke-TestScript -ScriptPath $logAudit -Arguments @('-ProjectPath', $origin.Project, '-ChangedFile', 'LogCheck.lua')
+        Assert-TestText -Text $result -Pattern "LOG_CALL\|LUA_L$level\|" -Message '数字等级未按字面值清点'
+        Assert-TestText -Text $result -Pattern 'LOG_AUDIT_RESULT=MANUAL_LEVEL_REVIEW_REQUIRED' -Message "数字等级 $level 被无证据放行"
+    }
+    Write-TestFile -Path $logFile -Content "GlobalAPI.debug('check')"
+    Write-TestFile -Path (Join-Path $origin.Project 'LogCheckTwo.lua') -Content "-- LuaAPI.log('disabled', 3)"
+    $result = Invoke-TestScript -ScriptPath $logAudit -Arguments @('-ProjectPath', $origin.Project, '-ChangedFile', 'LogCheck.lua,LogCheckTwo.lua')
+    Assert-TestText -Text $result -Pattern 'FILES=2' -Message '文档的逗号分隔文件参数不可用'
+    Assert-TestText -Text $result -Pattern 'LOG_AUDIT_RESULT=INVENTORY_READY' -Message '正常命名日志或行首注释被当成数字调用'
+    Write-TestFile -Path (Join-Path $world.Project 'client\LogCheck.lua') -Content "LogService:Warn('check')"
+    $result = Invoke-TestScript -ScriptPath $logAudit -Arguments @('-ProjectPath', $world.Project, '-ChangedFile', 'client\LogCheck.lua')
+    Assert-TestText -Text $result -Pattern 'LOG_CALL\|WORLD_WARN\|' -Message '世界版日志未分类'
+    Assert-TestText -Text $result -Pattern 'LOG_AUDIT_RESULT=MANUAL_LEVEL_REVIEW_REQUIRED' -Message '世界版警告未要求核对'
     $backupDirectory = Join-Path $workspace '.eggy-agent\backups'
     $backupCountBeforeRepeatInstall = @(Get-ChildItem -LiteralPath $backupDirectory -Directory -ErrorAction SilentlyContinue).Count
     Invoke-MapInstall -Map $world -ExpectedPattern '无需重复安装' | Out-Null
@@ -347,6 +372,19 @@ try {
     Invoke-TestScript -ScriptPath (Join-Path $preserveWorkspace '.eggy-agent\scripts\restore-eggy-agent.ps1') -Arguments @('-WorkspaceRoot', $preserveWorkspace, '-BackupPath', ([string]$preserveState.latestBackup)) | Out-Null
     Assert-Test -Condition (Test-Path (Join-Path $preserveWorkspace '.agents\skills')) -Message '初次恢复删除了安装前已有的空技能根目录'
     Assert-Test -Condition (@(Get-ChildItem (Join-Path $preserveWorkspace '.agents\skills') -Force -ErrorAction SilentlyContinue).Count -eq 0) -Message '恢复后原有空技能根目录不为空'
+
+    # 指纹有效也不能放行不存在的引用，防止文档能读、命令不能执行。
+    $badDocsPackage = Copy-TestPackage -Name '10 文档引用检查'
+    $badReadme = Join-Path $badDocsPackage 'README.md'
+    $originalReadme = Get-Content -Raw -Encoding UTF8 $badReadme
+    Write-TestFile -Path $badReadme -Content ($originalReadme + '`<总工作区>/.eggy-agent/scripts/missing-audit.ps1`')
+    Set-TestPackageVersion -PackagePath $badDocsPackage -Version $currentVersion
+    Invoke-TestScript -ScriptPath (Join-Path $badDocsPackage 'scripts\validate-release.ps1') -Arguments @('-PackageRoot', $badDocsPackage) `
+        -ExpectFailure -ExpectedPattern '引用了未发布的安装脚本' | Out-Null
+    Write-TestFile -Path $badReadme -Content ($originalReadme + '`../missing-reference.md`')
+    Set-TestPackageVersion -PackagePath $badDocsPackage -Version $currentVersion
+    Invoke-TestScript -ScriptPath (Join-Path $badDocsPackage 'scripts\validate-release.ps1') -Arguments @('-PackageRoot', $badDocsPackage) `
+        -ExpectFailure -ExpectedPattern '相对链接目标不存在' | Out-Null
 
     Write-Output 'RELEASE_SMOKE_RESULT=PASS'
     Write-Output "ASSERTIONS=$script:assertions"

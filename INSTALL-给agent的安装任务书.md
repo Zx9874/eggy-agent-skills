@@ -49,7 +49,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "<安装包根>\scripts\
 
 ## 全局安装
 
-全局范围必须由用户明确要求。执行前再次确认宿主和要安装的档案：
+全局范围只支持 `common`（公共能力）和 `tooling`（辅助工具），必须由用户明确要求。地图技能使用工作区范围，不改装到全局。执行前确认宿主和档案，信息已明确时不重复询问：
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "<安装包根>\scripts\install-eggy-agent.ps1" `

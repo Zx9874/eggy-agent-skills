@@ -55,19 +55,9 @@ if ($normalizedFiles.Count -eq 0) {
     throw 'ChangedFile does not contain a usable Lua file.'
 }
 
-# 原点版同时存在命名等级和数字等级；数字等级只按已经记录的项目约定清点，未知等级不猜。
-# 世界版按当前官方定义清点 LogService 的 Output、Info、Warn、Error 和 Log；通用 Log 必须使用
-# Enums.MessageType 的明确枚举值才能自动分类。通过其他变量别名调用服务时，脚本可能无法识别，仍须人工反查。
-# 2026-07-27 修复：旧版把所有 LuaAPI.log 一律归为 LEGACY_LOG 并强制人工复审，
-# 而本工作区项目日志几乎全部使用 LuaAPI.log 数字等级（官方定义 LuaAPI.log(_content, _log_level)，
-# EggyAPI.lua 第5534行；等级数值语义官方手册未记载）。项目实际约定：3=正常调试、2=警告、1=错误；
-# 等级4在项目中出现过但语义未经查证。分类规则：
-#   3 与 GlobalAPI.debug 同级 -> 通过；1/2 与 GlobalAPI.error/warning 同级 -> 需人工复审其异常依据；
-#   等级4、动态等级、未写等级 -> 语义未查证，进入人工复审，不做猜测放行。
-# 同日二次修复（对抗验证发现三处漏洞）：
-#   1. 行首 Lua 注释「--」内的日志调用归为 COMMENTED 死代码，单独统计，不再混入放行/复审口径；
-#   2. 同一行含多个日志调用时归为 MULTI_CALL 交人工复审（Select-String 每行只返回一个匹配，逐个解析不可靠）；
-#   3. 等级提取正则限定在 LuaAPI.log 自身括号范围内（允许一层嵌套调用），不再误读行尾无关调用的「, 数字)」。
+# 仅按调用文本清点，不推断数字等级含义，也不验证接口是否属于当前版本。
+# 行首注释单列；同一行多调用、动态枚举及数字等级交调用者结合当前工程证据核对。
+# 这是行级搜索，不是 Lua 解析器；字符串、长注释、多行调用和服务别名需人工反查。
 $pattern = '(GlobalAPI\.(debug|warning|error)|LuaAPI\.log|LogService:(Output|Info|Warn|Error|Log))\s*\('
 $counts = @{
     DEBUG = 0
@@ -93,7 +83,7 @@ $counts = @{
     WORLD_LOG_UNPARSED = 0
 }
 
-Write-Output 'LOG_AUDIT_VERSION=3'
+Write-Output 'LOG_AUDIT_VERSION=4'
 Write-Output "PROJECT=$project"
 Write-Output "EDITION=$($edition.ToUpperInvariant())"
 Write-Output "FILES=$($normalizedFiles.Count)"
@@ -175,12 +165,12 @@ Write-Output ("SUMMARY|DEBUG={0}|WARNING={1}|ERROR={2}|LUA_L1={3}|LUA_L2={4}|LUA
     $counts.DEBUG, $counts.WARNING, $counts.ERROR, $counts.LUA_L1, $counts.LUA_L2, $counts.LUA_L3, $counts.LUA_L4, $counts.LUA_OTHER, $counts.LUA_UNPARSED, $counts.MULTI_CALL, $counts.COMMENTED, $counts.TEST_MARKED, `
     $counts.WORLD_OUTPUT, $counts.WORLD_INFO, $counts.WORLD_WARN, $counts.WORLD_ERROR, $counts.WORLD_LOG_OUTPUT, $counts.WORLD_LOG_INFO, $counts.WORLD_LOG_WARNING, $counts.WORLD_LOG_ERROR, $counts.WORLD_LOG_UNPARSED)
 
-$needsReview = $counts.WARNING + $counts.ERROR + $counts.LUA_L1 + $counts.LUA_L2 + $counts.LUA_L4 + $counts.LUA_OTHER + $counts.LUA_UNPARSED + $counts.MULTI_CALL + `
+$needsReview = $counts.WARNING + $counts.ERROR + $counts.LUA_L1 + $counts.LUA_L2 + $counts.LUA_L3 + $counts.LUA_L4 + $counts.LUA_OTHER + $counts.LUA_UNPARSED + $counts.MULTI_CALL + `
     $counts.WORLD_WARN + $counts.WORLD_ERROR + $counts.WORLD_LOG_WARNING + $counts.WORLD_LOG_ERROR + $counts.WORLD_LOG_UNPARSED
 if ($needsReview -gt 0) {
     Write-Output 'LOG_AUDIT_RESULT=MANUAL_LEVEL_REVIEW_REQUIRED'
-    Write-Output "REVIEW_SCOPE=需人工复审 $needsReview 处：警告/错误级须有真实异常依据；原点版未知数字等级、世界版动态日志枚举与同行多调用不得猜测。普通输出或信息级共 $($counts.DEBUG + $counts.LUA_L3 + $counts.WORLD_OUTPUT + $counts.WORLD_INFO + $counts.WORLD_LOG_OUTPUT + $counts.WORLD_LOG_INFO) 处已放行；另有注释死代码 $($counts.COMMENTED) 处。"
+    Write-Output "REVIEW_SCOPE=需结合当前工程证据核对 $needsReview 处：警告/错误须有异常依据；所有数字等级、动态枚举与同行多调用不得猜测。按名称识别的普通输出或信息级共 $($counts.DEBUG + $counts.WORLD_OUTPUT + $counts.WORLD_INFO + $counts.WORLD_LOG_OUTPUT + $counts.WORLD_LOG_INFO) 处，分类不代表接口或触发条件已经正确；另有行首注释 $($counts.COMMENTED) 处。"
 } else {
     Write-Output 'LOG_AUDIT_RESULT=INVENTORY_READY'
 }
-Write-Output 'NEXT_STEP=Compare every listed call with the task log plan and inspect its trigger frequency before completion.'
+Write-Output 'NEXT_STEP=Check listed calls against current API evidence, trigger conditions and frequency; reuse confirmed evidence without creating a separate log plan.'
