@@ -1,4 +1,4 @@
-name: 原点版经验补充
+name: 编辑器经验补充
 description: 提交经过来源或测试支持的接口、编辑器边界和错误经验
 title: "[经验] "
 body:
@@ -8,7 +8,8 @@ body:
   - type: input
     id: version
     attributes:
-      label: 原点版编辑器版本与日期
+      label: 编辑器类型、版本与记录日期
+      description: 请注明原点版或世界版；版本不清楚时如实说明。
     validations:
       required: true
   - type: textarea

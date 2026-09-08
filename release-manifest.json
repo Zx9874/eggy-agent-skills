@@ -64,7 +64,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "25f5969072a5f8636ca07f5b73bdf7ca106d066e2c662d1b091f5ad486141bab"
+                      "sha256":  "030037574af1948d9a5fcaa5550e75fd74b84b94f9460c7467b471fc494f737b"
                   },
                   {
                       "path":  ".gitignore",
@@ -78,14 +78,14 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "a0f303439dc5a02d3e00c1dde25ddd0f8846e26bce9b2552619f3368dc745a61"
+                      "sha256":  "abeddbba5b2f391a8da71288a8e0030231be82f055715b6daebec2179b9f62de"
                   },
                   {
                       "path":  "CONTRIBUTING.md",
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "25db0059738cb6740bbf40260feb845c17915645372c2cfa91242b8ae387bd88"
+                      "sha256":  "9a56527153c2e3864a2b76f6ebbd6a3e2622a1040ab467a578c79f7339de2dcf"
                   },
                   {
                       "path":  "INSTALL-给agent的安装任务书.md",
@@ -641,5 +641,5 @@
                       "sha256":  "44c34b7b3886975856dcd8810743e6f467ee399ecc3d42b02dca509905287b16"
                   }
               ],
-    "sourceCommit":  "f8b51d59e761cefe3dbb32cc20955e03ccbfac91"
+    "sourceCommit":  "418bb0f21cd5e769b8cd440549348f24016769df"
 }
