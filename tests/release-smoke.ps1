@@ -200,6 +200,9 @@ try {
     Assert-Test -Condition ([int]$state.schemaVersion -eq 4) -Message '首次安装应写入第四版状态格式'
     Assert-Test -Condition (@($state.projects).Count -eq 1 -and [string]$state.projects[0].edition -eq 'Origin') -Message '原点版登记信息不正确'
     Assert-Test -Condition (@(Get-ChildItem (Join-Path $workspace '.agents\skills') -Directory).Count -eq $mapSkillCount) -Message '原点版技能数量应来自档案'
+    $compatibilityReference = 'eggy-lua-coding\references\save-compatibility.md'
+    $compatibilityHash = Get-EggySha256 -Path (Join-Path (Join-Path $package 'skills') $compatibilityReference)
+    Assert-Test -Condition ((Get-EggySha256 -Path (Join-Path (Join-Path $workspace '.agents\skills') $compatibilityReference)) -eq $compatibilityHash) -Message '原点版安装缺少或改写了存档兼容参考'
     Assert-TestText -Text (Get-Content -Raw -Encoding UTF8 (Join-Path $workspace 'AGENTS.md')) -Pattern '工作区用户内容' -Message '工作区用户内容被覆盖'
     Assert-TestText -Text (Get-Content -Raw -Encoding UTF8 (Join-Path $origin.Project 'AGENTS.md')) -Pattern '地图用户内容' -Message '地图用户内容被覆盖'
     Assert-TestText -Text (Get-Content -Raw -Encoding UTF8 (Join-Path $origin.Project 'docs\需求文档.md')) -Pattern '用户玩法内容' -Message '玩法需求被覆盖'
@@ -279,6 +282,7 @@ try {
     $zMap = New-TestMap -Workspace $zWorkspace -Name '世界图' -Edition World
     Invoke-MapInstall -Map $zMap -Agent ZCode -ExpectedPattern 'ZCode' | Out-Null
     Assert-Test -Condition (Test-Path (Join-Path $zWorkspace '.zcode\skills')) -Message 'ZCode 目标目录缺失'
+    Assert-Test -Condition ((Get-EggySha256 -Path (Join-Path (Join-Path $zWorkspace '.zcode\skills') $compatibilityReference)) -eq $compatibilityHash) -Message '世界版安装缺少或改写了存档兼容参考'
     Assert-Test -Condition (-not (Test-Path (Join-Path $zWorkspace '.agents\skills'))) -Message 'ZCode 不应创建 .agents/skills'
 
     # 辅助工具档案不创建地图规则和地图文档。
@@ -287,6 +291,7 @@ try {
         '-WorkspaceRoot', $toolWorkspace, '-Agent', 'OpenCode', '-Scope', 'Project', '-Profile', 'tooling'
     ) -ExpectedPattern "当前受管技能 $toolingSkillCount 项" | Out-Null
     Assert-Test -Condition (Test-Path (Join-Path $toolWorkspace '.agents\skills\eggy-ponytail')) -Message '工具档案缺少公共极简技能'
+    Assert-Test -Condition (-not (Test-Path (Join-Path $toolWorkspace '.agents\skills\eggy-lua-coding'))) -Message '辅助工具安装不应加载地图存档规则'
     Assert-Test -Condition (-not (Test-Path (Join-Path $toolWorkspace 'AGENTS.md'))) -Message '工具安装不应写地图规则'
     Assert-Test -Condition (-not (Test-Path (Join-Path $toolWorkspace 'docs'))) -Message '工具安装不应创建地图文档'
     Invoke-TestScript -ScriptPath (Join-Path $package 'scripts\set-eggy-agent-enabled.ps1') -Arguments @(

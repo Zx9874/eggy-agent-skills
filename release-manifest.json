@@ -78,7 +78,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "abeddbba5b2f391a8da71288a8e0030231be82f055715b6daebec2179b9f62de"
+                      "sha256":  "eb75f40c67addfed90751cc975218e137bbf308b8cef29bfb99556fc40467226"
                   },
                   {
                       "path":  "CONTRIBUTING.md",
@@ -281,7 +281,7 @@
                       "category":  "skill",
                       "skill":  "eggy-dev-plan",
                       "installTarget":  "{SKILL_ROOT}/eggy-dev-plan/references/project-overview.md",
-                      "sha256":  "ec401d9e891b46a82a2f24e1b0356321fa86c2c6dbee035f207845078c819c72"
+                      "sha256":  "60e7a7e0d5354fdb5f40a51f6ddd4cccd6c8ad542a1b6e2bcac7344c6af1299d"
                   },
                   {
                       "path":  "skills/eggy-dev-plan/references/task-files.md",
@@ -368,11 +368,18 @@
                       "sha256":  "2df393e7c2f2b53f36ee627c5b76fd7e0d1d3bbc5e75bdbd1d51191b81aa7778"
                   },
                   {
+                      "path":  "skills/eggy-lua-coding/references/save-compatibility.md",
+                      "category":  "skill",
+                      "skill":  "eggy-lua-coding",
+                      "installTarget":  "{SKILL_ROOT}/eggy-lua-coding/references/save-compatibility.md",
+                      "sha256":  "fdb74a25d12e86f6b74bd1a9f5a674cd8d63fec2958ba84fd1954ba3a830bb79"
+                  },
+                  {
                       "path":  "skills/eggy-lua-coding/SKILL.md",
                       "category":  "skill",
                       "skill":  "eggy-lua-coding",
                       "installTarget":  "{SKILL_ROOT}/eggy-lua-coding/SKILL.md",
-                      "sha256":  "e903b1759d1012b2f9d155b1cd304d4bb8d5376e442a43007e0f82bb126d647f"
+                      "sha256":  "52df43b0d199c39e56d124531ec949ac3f751178ca88e709848440654d367157"
                   },
                   {
                       "path":  "skills/eggy-lua-export/SKILL.md",
@@ -470,7 +477,7 @@
                       "category":  "skill",
                       "skill":  "eggy-qa",
                       "installTarget":  "{SKILL_ROOT}/eggy-qa/SKILL.md",
-                      "sha256":  "6ffaea8958d1a667ea3ad61e0c5066a91eedbae171635c9d9acd28e8dea38bc4"
+                      "sha256":  "767aecb55ac5a76d01957891f997b73e88db2a62aa7fca0e6c13b5695f0f472e"
                   },
                   {
                       "path":  "skills/eggy-unit-model-swap/SKILL.md",
@@ -596,7 +603,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/templates/项目README模板.md",
-                      "sha256":  "8148f55c706157d62d18562ff912d43c6877e571699042a0aa4eea6e3e056e5d"
+                      "sha256":  "c42c9a4d2b01639152a79dca96495f74d898de1131200e824406266643342817"
                   },
                   {
                       "path":  "templates/项目规则受管块.md",
@@ -624,7 +631,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "4349d5e416e350b10f7024712127842dbae791c29deed801d3ffc14640f19e1a"
+                      "sha256":  "31d4cd5de45b3323f861e2af9bd10f3d30127a670f5d3c8a8d00e3254dcbcb42"
                   },
                   {
                       "path":  "UPDATE-给agent的升级任务书.md",
@@ -641,5 +648,5 @@
                       "sha256":  "44c34b7b3886975856dcd8810743e6f467ee399ecc3d42b02dca509905287b16"
                   }
               ],
-    "sourceCommit":  "418bb0f21cd5e769b8cd440549348f24016769df"
+    "sourceCommit":  "add3847c54e2c21cae5ebd6414a4945d081527e6"
 }
