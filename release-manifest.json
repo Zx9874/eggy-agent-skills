@@ -78,7 +78,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "eb75f40c67addfed90751cc975218e137bbf308b8cef29bfb99556fc40467226"
+                      "sha256":  "5b590aed541466c4b4f4a51eec08dd0a7534a230d6e85611840c783540ec9910"
                   },
                   {
                       "path":  "CONTRIBUTING.md",
@@ -372,14 +372,14 @@
                       "category":  "skill",
                       "skill":  "eggy-lua-coding",
                       "installTarget":  "{SKILL_ROOT}/eggy-lua-coding/references/save-compatibility.md",
-                      "sha256":  "fdb74a25d12e86f6b74bd1a9f5a674cd8d63fec2958ba84fd1954ba3a830bb79"
+                      "sha256":  "5070e8b0d875b1c7e92fc70599068b10d72f14434293dfbaaf6e95644f3573a4"
                   },
                   {
                       "path":  "skills/eggy-lua-coding/SKILL.md",
                       "category":  "skill",
                       "skill":  "eggy-lua-coding",
                       "installTarget":  "{SKILL_ROOT}/eggy-lua-coding/SKILL.md",
-                      "sha256":  "52df43b0d199c39e56d124531ec949ac3f751178ca88e709848440654d367157"
+                      "sha256":  "220aad129b95235fb8fbc89d1bc4d1459ae6f4706d7cb054e1b27855a6256925"
                   },
                   {
                       "path":  "skills/eggy-lua-export/SKILL.md",
@@ -477,7 +477,7 @@
                       "category":  "skill",
                       "skill":  "eggy-qa",
                       "installTarget":  "{SKILL_ROOT}/eggy-qa/SKILL.md",
-                      "sha256":  "767aecb55ac5a76d01957891f997b73e88db2a62aa7fca0e6c13b5695f0f472e"
+                      "sha256":  "db0926303a76ffd1041f30e77ce06b612f429b5949dde950c31fc81783028a65"
                   },
                   {
                       "path":  "skills/eggy-unit-model-swap/SKILL.md",
@@ -648,5 +648,5 @@
                       "sha256":  "44c34b7b3886975856dcd8810743e6f467ee399ecc3d42b02dca509905287b16"
                   }
               ],
-    "sourceCommit":  "add3847c54e2c21cae5ebd6414a4945d081527e6"
+    "sourceCommit":  "824f8eff494b56da9997cd11554ceed1562100b6"
 }
