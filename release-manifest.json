@@ -78,7 +78,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "5b590aed541466c4b4f4a51eec08dd0a7534a230d6e85611840c783540ec9910"
+                      "sha256":  "a898de17233c498ff4d6bed4399122a5424a1ad18ef2cd77fc205fcdc79a9300"
                   },
                   {
                       "path":  "CONTRIBUTING.md",
@@ -379,7 +379,7 @@
                       "category":  "skill",
                       "skill":  "eggy-lua-coding",
                       "installTarget":  "{SKILL_ROOT}/eggy-lua-coding/SKILL.md",
-                      "sha256":  "220aad129b95235fb8fbc89d1bc4d1459ae6f4706d7cb054e1b27855a6256925"
+                      "sha256":  "e07d26806fd99739fb69bede4a079894a3e67cf4a91eb3436c31c2d1116ae26e"
                   },
                   {
                       "path":  "skills/eggy-lua-export/SKILL.md",
@@ -477,7 +477,7 @@
                       "category":  "skill",
                       "skill":  "eggy-qa",
                       "installTarget":  "{SKILL_ROOT}/eggy-qa/SKILL.md",
-                      "sha256":  "db0926303a76ffd1041f30e77ce06b612f429b5949dde950c31fc81783028a65"
+                      "sha256":  "ac83eda6a4e2b54f1a34942e4f541362fd0d02ead705fcaedaa188f93709991d"
                   },
                   {
                       "path":  "skills/eggy-unit-model-swap/SKILL.md",
@@ -648,5 +648,5 @@
                       "sha256":  "44c34b7b3886975856dcd8810743e6f467ee399ecc3d42b02dca509905287b16"
                   }
               ],
-    "sourceCommit":  "dc8cfdda98bde67d47c847ba3eb0ad30d0e24d8c"
+    "sourceCommit":  "132117f1fee5fac46a7df9a667063a3a2c3a240d"
 }
