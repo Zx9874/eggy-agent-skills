@@ -78,7 +78,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "a898de17233c498ff4d6bed4399122a5424a1ad18ef2cd77fc205fcdc79a9300"
+                      "sha256":  "ae7f3c903a485667ad98c235be1a33fe340505440a6ec7ed56b79c6e93989517"
                   },
                   {
                       "path":  "CONTRIBUTING.md",
@@ -323,7 +323,7 @@
                       "category":  "skill",
                       "skill":  "eggy-game-planning",
                       "installTarget":  "{SKILL_ROOT}/eggy-game-planning/references/interview-map.md",
-                      "sha256":  "cfa9b76590b542e560fbc418772511b20c5772e6ed2ec102e8d3c7fff5a6fd54"
+                      "sha256":  "bce0bc577d0aecada620142d3064334e3afa582110814cdc761e25e1184730ee"
                   },
                   {
                       "path":  "skills/eggy-game-planning/references/origin-planning.md",
@@ -379,7 +379,7 @@
                       "category":  "skill",
                       "skill":  "eggy-lua-coding",
                       "installTarget":  "{SKILL_ROOT}/eggy-lua-coding/SKILL.md",
-                      "sha256":  "e07d26806fd99739fb69bede4a079894a3e67cf4a91eb3436c31c2d1116ae26e"
+                      "sha256":  "f8ad1655dc5ad2cf7a190d4990e4778aa46689c6666605aa19c8738d70342f74"
                   },
                   {
                       "path":  "skills/eggy-lua-export/SKILL.md",
@@ -477,7 +477,7 @@
                       "category":  "skill",
                       "skill":  "eggy-qa",
                       "installTarget":  "{SKILL_ROOT}/eggy-qa/SKILL.md",
-                      "sha256":  "ac83eda6a4e2b54f1a34942e4f541362fd0d02ead705fcaedaa188f93709991d"
+                      "sha256":  "8899b0d297906320739a7479aedbd5df0c59fd309b2228ee512eb1c5a074b1a4"
                   },
                   {
                       "path":  "skills/eggy-unit-model-swap/SKILL.md",
@@ -648,5 +648,5 @@
                       "sha256":  "44c34b7b3886975856dcd8810743e6f467ee399ecc3d42b02dca509905287b16"
                   }
               ],
-    "sourceCommit":  "132117f1fee5fac46a7df9a667063a3a2c3a240d"
+    "sourceCommit":  "15eade645a2bc68343a9cee91c02ba92227a9f2f"
 }
