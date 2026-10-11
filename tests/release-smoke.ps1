@@ -142,6 +142,22 @@ function Set-TestPackageVersion {
     Invoke-TestScript -ScriptPath (Join-Path $PackagePath 'scripts\generate-release-manifest.ps1') -Arguments @('-PackageRoot', $PackagePath) | Out-Null
 }
 
+function Convert-TestPublishedTextToLf {
+    param([Parameter(Mandatory = $true)][string]$PackagePath)
+    $binaryExtensions = @('.png', '.jpg', '.jpeg', '.gif', '.webp', '.zip')
+    foreach ($entry in @(Get-EggyPublishSourceFiles -PackageRoot $PackagePath)) {
+        $path = Join-Path $PackagePath ([string]$entry.path).Replace('/', '\')
+        $extension = [System.IO.Path]::GetExtension($path).ToLowerInvariant()
+        if ($binaryExtensions -contains $extension) { continue }
+        $bytes = [System.IO.File]::ReadAllBytes($path)
+        $hasBom = $bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF
+        $content = [System.Text.Encoding]::UTF8.GetString($bytes)
+        if ($hasBom -and $content.StartsWith([string][char]0xFEFF)) { $content = $content.Substring(1) }
+        $encoding = New-Object System.Text.UTF8Encoding($hasBom)
+        [System.IO.File]::WriteAllText($path, $content.Replace("`r`n", "`n").Replace("`r", "`n"), $encoding)
+    }
+}
+
 try {
     [System.IO.Directory]::CreateDirectory($testRoot) | Out-Null
     $mapSkillCount = @(Get-EggyProfileSkillNames -Catalog $catalog -Profile 'map-origin').Count
@@ -390,6 +406,12 @@ try {
     Set-TestPackageVersion -PackagePath $badDocsPackage -Version $currentVersion
     Invoke-TestScript -ScriptPath (Join-Path $badDocsPackage 'scripts\validate-release.ps1') -Arguments @('-PackageRoot', $badDocsPackage) `
         -ExpectFailure -ExpectedPattern '相对链接目标不存在' | Out-Null
+
+    # 模拟 Windows 本地生成清单后提交到 GitHub，下载端得到统一 LF 文本。
+    $lineEndingPackage = Copy-TestPackage -Name '11 GitHub LF 发布包'
+    Set-TestPackageVersion -PackagePath $lineEndingPackage -Version $currentVersion
+    Convert-TestPublishedTextToLf -PackagePath $lineEndingPackage
+    Invoke-TestScript -ScriptPath (Join-Path $lineEndingPackage 'scripts\validate-release.ps1') -Arguments @('-PackageRoot', $lineEndingPackage) | Out-Null
 
     Write-Output 'RELEASE_SMOKE_RESULT=PASS'
     Write-Output "ASSERTIONS=$script:assertions"

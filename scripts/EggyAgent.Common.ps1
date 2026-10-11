@@ -168,6 +168,27 @@ function Get-EggySha256 {
     return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()
 }
 
+function Get-EggyPublishSha256 {
+    param([Parameter(Mandatory = $true)][string]$Path)
+    if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) { return $null }
+
+    # 发布清单按仓库中的 LF 文本字节计算，避免 Windows 工作区的 CRLF 与 GitHub 下载包产生不同指纹。
+    $binaryExtensions = @('.png', '.jpg', '.jpeg', '.gif', '.webp', '.zip')
+    $extension = [System.IO.Path]::GetExtension($Path).ToLowerInvariant()
+    if ($binaryExtensions -contains $extension) { return Get-EggySha256 -Path $Path }
+
+    $bytes = [System.IO.File]::ReadAllBytes($Path)
+    $text = [System.Text.Encoding]::UTF8.GetString($bytes)
+    $canonical = $text.Replace("`r`n", "`n").Replace("`r", "`n")
+    $canonicalBytes = New-Object System.Text.UTF8Encoding($false)
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        return (($sha.ComputeHash($canonicalBytes.GetBytes($canonical)) | ForEach-Object { $_.ToString('x2') }) -join '')
+    } finally {
+        $sha.Dispose()
+    }
+}
+
 function Get-EggyTextSha256 {
     param([Parameter(Mandatory = $true)][string]$Text)
     $bytes = [System.Text.Encoding]::UTF8.GetBytes($Text)
@@ -1128,7 +1149,7 @@ function Get-EggyPublishSourceFiles {
             category = $category
             skill = $skill
             installTarget = $installTarget
-            sha256 = Get-EggySha256 -Path $file.FullName
+            sha256 = Get-EggyPublishSha256 -Path $file.FullName
         }
     }
     return @($result | Sort-Object path)
@@ -1147,7 +1168,7 @@ function Assert-EggyPackageManifest {
     if ($version -ne [string]$manifest.version) { throw "VERSION 与发布清单版本不一致：$version / $($manifest.version)" }
     $catalog = Get-EggyCatalog -PackageRoot $root
     if ([string]$manifest.catalog.path -ne 'skill-catalog.json') { throw '发布清单的技能目录路径不正确。' }
-    if ((Get-EggySha256 -Path (Join-Path $root 'skill-catalog.json')) -ne [string]$manifest.catalog.sha256) {
+    if ((Get-EggyPublishSha256 -Path (Join-Path $root 'skill-catalog.json')) -ne [string]$manifest.catalog.sha256) {
         throw '技能目录文件指纹不一致。'
     }
 
@@ -1169,7 +1190,7 @@ function Assert-EggyPackageManifest {
             throw "发布清单安装元数据不一致：$relative"
         }
         $source = Join-Path $root ($relative.Replace('/', '\'))
-        if ((Get-EggySha256 -Path $source) -ne ([string]$entry.sha256).ToLowerInvariant()) {
+        if ((Get-EggyPublishSha256 -Path $source) -ne ([string]$entry.sha256).ToLowerInvariant()) {
             throw "安装包文件指纹不一致：$relative"
         }
     }

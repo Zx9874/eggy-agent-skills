@@ -78,7 +78,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "ae7f3c903a485667ad98c235be1a33fe340505440a6ec7ed56b79c6e93989517"
+                      "sha256":  "1d0c98f035b74308656d636f67a86e0520e939766092af06036d648f1dfe0fee"
                   },
                   {
                       "path":  "CONTRIBUTING.md",
@@ -134,7 +134,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/EggyAgent.Common.ps1",
-                      "sha256":  "df95b2297bdfa84aed17ffc56d0df9326fe44f3ca00d4e9da4a06d6f46be5009"
+                      "sha256":  "1e592af8748a1f64f012af42a6f31852edda7b7c4b68db97a99003785e1de901"
                   },
                   {
                       "path":  "scripts/export-contract-audit.ps1",
@@ -148,7 +148,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/generate-release-manifest.ps1",
-                      "sha256":  "daa39504bd214799fcf24825b0a8d8d3d773676e955bd6f9d8748b5927c3d872"
+                      "sha256":  "f8a88c79379921846017072a555bb62600e891afa63c7dea54e59d8b7c88ed5a"
                   },
                   {
                       "path":  "scripts/git-batch-audit.ps1",
@@ -400,7 +400,7 @@
                       "category":  "skill",
                       "skill":  "eggy-ponytail",
                       "installTarget":  "{SKILL_ROOT}/eggy-ponytail/LICENSE",
-                      "sha256":  "f1af4301bd3b85026965f9f1cfa101b9bfd73a75c6b92f7a2a72bab5768abd36"
+                      "sha256":  "fb1bc6909ac3ef82d5c22106e32ef682b0cff66788fa915fb9b53b15c9d2f3ab"
                   },
                   {
                       "path":  "skills/eggy-ponytail/references/operations.md",
@@ -414,49 +414,49 @@
                       "category":  "skill",
                       "skill":  "eggy-ponytail",
                       "installTarget":  "{SKILL_ROOT}/eggy-ponytail/references/upstream/ponytail-audit-SKILL.md",
-                      "sha256":  "49e835c96313009179ec162d80ccc9d91625e387c8af7cd3975c531ba105b2d5"
+                      "sha256":  "5560b8e383dbe2ddfddc873a1e2bf2e586e23e0cd7d995537482b2315331f6d1"
                   },
                   {
                       "path":  "skills/eggy-ponytail/references/upstream/ponytail-debt-SKILL.md",
                       "category":  "skill",
                       "skill":  "eggy-ponytail",
                       "installTarget":  "{SKILL_ROOT}/eggy-ponytail/references/upstream/ponytail-debt-SKILL.md",
-                      "sha256":  "c0a5c0c0cc843cb53f15b792790946768500b45538d07fadbf0602ed6af63a47"
+                      "sha256":  "c84fba75f0ca12bfe83f9a78ea02fd125c5dd3f1fbb18124105a489937f284e6"
                   },
                   {
                       "path":  "skills/eggy-ponytail/references/upstream/ponytail-gain-SKILL.md",
                       "category":  "skill",
                       "skill":  "eggy-ponytail",
                       "installTarget":  "{SKILL_ROOT}/eggy-ponytail/references/upstream/ponytail-gain-SKILL.md",
-                      "sha256":  "f8847c410b54978fff41eab775fc754d41ede19ad6fb72fac799b65616cc6683"
+                      "sha256":  "24e01d1c9715cb136ba1c4f1e52a95940c0193558b876828e537736480d6408b"
                   },
                   {
                       "path":  "skills/eggy-ponytail/references/upstream/ponytail-help-SKILL.md",
                       "category":  "skill",
                       "skill":  "eggy-ponytail",
                       "installTarget":  "{SKILL_ROOT}/eggy-ponytail/references/upstream/ponytail-help-SKILL.md",
-                      "sha256":  "07e0fc50c722cee981d47f62a5d32a7def4cb65651f414724e5fd6939f145977"
+                      "sha256":  "2264d1615117b02b0fd5a69ec84cd2757006471a78e4d6c22eed6d581c1d37a4"
                   },
                   {
                       "path":  "skills/eggy-ponytail/references/upstream/ponytail-review-SKILL.md",
                       "category":  "skill",
                       "skill":  "eggy-ponytail",
                       "installTarget":  "{SKILL_ROOT}/eggy-ponytail/references/upstream/ponytail-review-SKILL.md",
-                      "sha256":  "6c8b7e5c897a406b66da6aabda7fa6509e8d1d447e73e602265d7986497445d1"
+                      "sha256":  "40df33b58fc6ef889b93585733feb9566b76e9586efa7f376785c1e995197ac0"
                   },
                   {
                       "path":  "skills/eggy-ponytail/references/upstream/ponytail-SKILL.md",
                       "category":  "skill",
                       "skill":  "eggy-ponytail",
                       "installTarget":  "{SKILL_ROOT}/eggy-ponytail/references/upstream/ponytail-SKILL.md",
-                      "sha256":  "46a57e26a2632e7fa40eae6a3cf3011ccdc4d8db19d8f8617907d6b5deef055e"
+                      "sha256":  "1316a2f3f95741d2300b116fe0c2d81ce4a9568656ed0a62643f54aaf09957f2"
                   },
                   {
                       "path":  "skills/eggy-ponytail/references/upstream-source.json",
                       "category":  "skill",
                       "skill":  "eggy-ponytail",
                       "installTarget":  "{SKILL_ROOT}/eggy-ponytail/references/upstream-source.json",
-                      "sha256":  "af75f1f8ebaece17627e007e9495e4e7d7778e6ac01a1a9babe833431e4d846f"
+                      "sha256":  "bbe90ce3a5476403babf29adaeaac12c53f8f20b9b4e6e0c6de2ab784b54d698"
                   },
                   {
                       "path":  "skills/eggy-ponytail/SKILL.md",
@@ -631,7 +631,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "31d4cd5de45b3323f861e2af9bd10f3d30127a670f5d3c8a8d00e3254dcbcb42"
+                      "sha256":  "e191f54362c28d973e131e65f4eb22d13b2fa8c8332d83d3a305a5d1148f97e1"
                   },
                   {
                       "path":  "UPDATE-给agent的升级任务书.md",
@@ -648,5 +648,5 @@
                       "sha256":  "44c34b7b3886975856dcd8810743e6f467ee399ecc3d42b02dca509905287b16"
                   }
               ],
-    "sourceCommit":  "15eade645a2bc68343a9cee91c02ba92227a9f2f"
+    "sourceCommit":  "031209a62fa2a66e148a4d783566ea6adccaf916"
 }

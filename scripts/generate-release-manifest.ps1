@@ -20,7 +20,7 @@ $manifest = [ordered]@{
     compatibleAgents = @('OpenCode', 'Codex', 'ZCode')
     catalog = [ordered]@{
         path = 'skill-catalog.json'
-        sha256 = Get-EggySha256 -Path (Join-Path $root 'skill-catalog.json')
+        sha256 = Get-EggyPublishSha256 -Path (Join-Path $root 'skill-catalog.json')
     }
     hosts = [ordered]@{
         Codex = $catalog.hosts.Codex
