@@ -335,6 +335,27 @@ try {
     Assert-Test -Condition ($upgradeBackupPaths -contains '.agents/skills/eggy-lua-coding/SKILL.md') -Message '升级备份缺少实际变化的技能文件'
     Assert-Test -Condition ($upgradeBackupPaths -notcontains '.agents/skills/eggy-qa/SKILL.md') -Message '升级备份复制了未变化的技能文件'
 
+    # 旧安装记录中的规则指纹可能因历史模板、代理改写或换行差异失真；
+    # 受管区块仍完整时，升级应刷新规则并保留区块外的用户内容，不应把整个升级拦死。
+    $rootBlockForHash = Get-EggyManagedBlock -Path (Join-Path $workspace 'AGENTS.md')
+    $rootBlockLf = $rootBlockForHash.Replace("`r`n", "`n").Replace("`r", "`n")
+    $rootBlockCrlf = $rootBlockLf.Replace("`n", "`r`n")
+    Assert-Test -Condition ((Get-EggyTextSha256 -Text $rootBlockLf) -eq (Get-EggyTextSha256 -Text $rootBlockCrlf)) -Message '规则指纹没有忽略换行差异'
+    $staleRuleState = Read-TestJson -Path $statePath
+    $staleRuleState.rootRuleBlockSha256 = 'stale-rule-record'
+    foreach ($project in @($staleRuleState.projects)) { $project.projectRuleBlockSha256 = 'stale-project-rule-record' }
+    Write-TestJson -Path $statePath -Value $staleRuleState
+    $ruleRecoveryPackage = Copy-TestPackage -Name '05 规则记录恢复包'
+    Set-TestPackageVersion -PackagePath $ruleRecoveryPackage -Version '0.1.0-rc.7'
+    Invoke-TestScript -ScriptPath (Join-Path $ruleRecoveryPackage 'scripts\update-eggy-agent.ps1') -Arguments @(
+        '-WorkspaceRoot', $workspace, '-PackageRoot', $ruleRecoveryPackage
+    ) -ExpectedPattern '0.1.0-rc.7' | Out-Null
+    $recoveredRuleState = Read-TestJson -Path $statePath
+    $recoveredRootBlock = Get-EggyManagedBlock -Path (Join-Path $workspace 'AGENTS.md')
+    Assert-Test -Condition ([string]$recoveredRuleState.rootRuleBlockSha256 -eq (Get-EggyTextSha256 -Text $recoveredRootBlock)) -Message '规则记录失真后没有被升级修复'
+    Assert-TestText -Text (Get-Content -Raw -Encoding UTF8 (Join-Path $workspace 'AGENTS.md')) -Pattern '工作区用户内容' -Message '规则恢复覆盖了总工作区用户内容'
+    Assert-TestText -Text (Get-Content -Raw -Encoding UTF8 (Join-Path $origin.Project 'AGENTS.md')) -Pattern '地图用户内容' -Message '规则恢复覆盖了地图用户内容'
+
     # 旧版单地图状态可以迁移到第四版。
     $legacyWorkspace = New-TestWorkspace -Name '05 旧状态'
     $legacyMap = New-TestMap -Workspace $legacyWorkspace -Name '旧状态图' -Edition Origin

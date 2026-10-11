@@ -77,14 +77,14 @@ function Assert-StateRules {
     if (-not [bool]$State.rulesEnabled) { return }
     $rootPath = Join-Path $Descriptor.WorkspaceRoot 'AGENTS.md'
     $rootBlock = Get-EggyManagedBlock -Path $rootPath
-    if (-not $rootBlock -or (Get-EggyTextSha256 -Text $rootBlock) -ne [string]$State.rootRuleBlockSha256) {
-        throw '总工作区受管规则块被改过、缺失或损坏，升级已停止。'
+    if (-not $rootBlock) {
+        throw '总工作区受管规则块缺失或损坏，升级已停止。'
     }
     foreach ($project in @($State.projects)) {
         $path = Join-Path ([string]$project.path) 'AGENTS.md'
         $block = Get-EggyManagedBlock -Path $path
-        if (-not $block -or (Get-EggyTextSha256 -Text $block) -ne [string]$project.projectRuleBlockSha256) {
-            throw "地图受管规则块被改过、缺失或损坏，升级已停止：$path"
+        if (-not $block) {
+            throw "地图受管规则块缺失或损坏，升级已停止：$path"
         }
     }
 }

@@ -92,14 +92,14 @@ function Assert-RulesBeforeToggle {
     $rootPath = Join-Path $Descriptor.WorkspaceRoot 'AGENTS.md'
     $rootBlock = Get-EggyManagedBlock -Path $rootPath
     if ($Mode -eq 'Disabled') {
-        if (-not $rootBlock -or (Get-EggyTextSha256 -Text $rootBlock) -ne [string]$State.rootRuleBlockSha256) {
-            throw '总工作区受管规则块缺失、被修改或损坏，尚未停用任何内容。'
+        if (-not $rootBlock) {
+            throw '总工作区受管规则块缺失或损坏，尚未停用任何内容。'
         }
         foreach ($project in @($State.projects)) {
             $path = Join-Path ([string]$project.path) 'AGENTS.md'
             $block = Get-EggyManagedBlock -Path $path
-            if (-not $block -or (Get-EggyTextSha256 -Text $block) -ne [string]$project.projectRuleBlockSha256) {
-                throw "地图受管规则块缺失、被修改或损坏，尚未停用任何内容：$path"
+            if (-not $block) {
+                throw "地图受管规则块缺失或损坏，尚未停用任何内容：$path"
             }
         }
     } else {
@@ -121,14 +121,13 @@ function Test-RulesAlreadyInMode {
     $rootPath = Join-Path $Descriptor.WorkspaceRoot 'AGENTS.md'
     $rootBlock = Get-EggyManagedBlock -Path $rootPath
     if ($Mode -eq 'Enabled') {
-        if (-not [bool]$State.rulesEnabled -or -not $rootBlock -or
-            (Get-EggyTextSha256 -Text $rootBlock) -ne [string]$State.rootRuleBlockSha256) {
+        if (-not [bool]$State.rulesEnabled -or -not $rootBlock) {
             return $false
         }
         foreach ($project in @($State.projects)) {
             $path = Join-Path ([string]$project.path) 'AGENTS.md'
             $block = Get-EggyManagedBlock -Path $path
-            if (-not $block -or (Get-EggyTextSha256 -Text $block) -ne [string]$project.projectRuleBlockSha256) {
+            if (-not $block) {
                 return $false
             }
         }

@@ -1,7 +1,7 @@
 {
     "schemaVersion":  2,
     "package":  "eggy-agent-skills",
-    "version":  "0.1.0-rc.5",
+    "version":  "0.1.0-rc.6",
     "channel":  "release-candidate",
     "compatibleAgents":  [
                              "OpenCode",
@@ -78,7 +78,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "1d0c98f035b74308656d636f67a86e0520e939766092af06036d648f1dfe0fee"
+                      "sha256":  "b2bc9f2a4e334ec3d96dccb34632b6b44c5c54ca48721fc6f9c532b8c1902919"
                   },
                   {
                       "path":  "CONTRIBUTING.md",
@@ -134,7 +134,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/EggyAgent.Common.ps1",
-                      "sha256":  "1e592af8748a1f64f012af42a6f31852edda7b7c4b68db97a99003785e1de901"
+                      "sha256":  "3655ece40072dc37226c3e19e65048972add6f21cd42d9549e23b504824063de"
                   },
                   {
                       "path":  "scripts/export-contract-audit.ps1",
@@ -162,7 +162,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/install-eggy-agent.ps1",
-                      "sha256":  "1e19bbd440e7c714dab0c0233698ecbd2a6b16c6de38b632447052036a2dcdc6"
+                      "sha256":  "d5bf84c43381330c36b3350d3e74ae48f61dc69e31fa64f6537fa27ae8c4d1b1"
                   },
                   {
                       "path":  "scripts/log-audit.ps1",
@@ -176,7 +176,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/README.md",
-                      "sha256":  "caa09927f7908381653ee3b2d7ef0467ab59933c0dd0776b764b8a95eea9278a"
+                      "sha256":  "15bb7f77e65af23785162e30c5c5bf26faee42cdfa12c06aac42b8f319232db1"
                   },
                   {
                       "path":  "scripts/restore-eggy-agent.ps1",
@@ -190,7 +190,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/set-eggy-agent-enabled.ps1",
-                      "sha256":  "41dae3f05cf063a407dd2a9ba7fce1eef815be35e8c02e2daa07cc1879b57ec6"
+                      "sha256":  "cb4a3862e03b7305c3a215c139deab19eb1d72842b1135f4338761baf85e06be"
                   },
                   {
                       "path":  "scripts/sync-upstream.ps1",
@@ -204,7 +204,7 @@
                       "category":  "support",
                       "skill":  "",
                       "installTarget":  ".eggy-agent/scripts/update-eggy-agent.ps1",
-                      "sha256":  "67f73a5ca70108dcd78e87e18687b3b3aebe4fc848e683d5535c84d009b28c93"
+                      "sha256":  "87bc363ec50b8d3df09de8f435fae6d92984f525b5fdc06b9ac6d68aec4d8f45"
                   },
                   {
                       "path":  "scripts/validate-release.ps1",
@@ -533,7 +533,7 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "76eb55445fb69f0e9c92c57443233e57cf9ecfa36db6edc9491cae0d7fbd1ccb"
+                      "sha256":  "633a6b58a4c10e2bee21e5652e211c44a6107bf6c73b576b0754a680052ac8e1"
                   },
                   {
                       "path":  "templates/地图.gitattributes模板",
@@ -631,22 +631,22 @@
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "e191f54362c28d973e131e65f4eb22d13b2fa8c8332d83d3a305a5d1148f97e1"
+                      "sha256":  "7cc528464a0527d45d2e7d223bd00e5b9066e0ee9e1dcd3a353fd121d5e4fc6b"
                   },
                   {
                       "path":  "UPDATE-给agent的升级任务书.md",
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "ce9e7027d914919e9a65b0d9f93a435adb48d641f0add2557d2bdfdc01dbaf7b"
+                      "sha256":  "ee913cf61b0ef3300bb19ca8ea97b3d82cc4d5165df44994aae7f3b3d35ef8cb"
                   },
                   {
                       "path":  "VERSION",
                       "category":  "documentation",
                       "skill":  "",
                       "installTarget":  "",
-                      "sha256":  "44c34b7b3886975856dcd8810743e6f467ee399ecc3d42b02dca509905287b16"
+                      "sha256":  "11923af84d69a31cc3fce3596cde030a55c88e9ff3da059e9a19b28880f1b8fd"
                   }
               ],
-    "sourceCommit":  "c1837b0eee1ebdc35eac1dc1bac0139aa7e5c25c"
+    "sourceCommit":  "9102405efc579b7bd952170d1f84df663b1cfd78"
 }

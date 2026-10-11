@@ -191,7 +191,10 @@ function Get-EggyPublishSha256 {
 
 function Get-EggyTextSha256 {
     param([Parameter(Mandatory = $true)][string]$Text)
-    $bytes = [System.Text.Encoding]::UTF8.GetBytes($Text)
+    # 规则受管区块的内容不应因 Windows CRLF 与 GitHub LF 的换行差异而被误判为用户修改。
+    # 文件发布指纹和 Lua 技能文件仍使用各自的原始字节校验；这里只规范化规则文本。
+    $canonical = $Text.Replace("`r`n", "`n").Replace("`r", "`n")
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes($canonical)
     $sha = [System.Security.Cryptography.SHA256]::Create()
     try {
         return (($sha.ComputeHash($bytes) | ForEach-Object { $_.ToString('x2') }) -join '')
